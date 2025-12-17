@@ -93,5 +93,6 @@ Contributions are welcome. Open an issue or submit a pull request with a clear d
 ---
 
 Notes:
+
 - This README assumes `make` produces an `interpret` binary in the project root; if your `Makefile` uses different paths, adapt accordingly.
 - If you want, I can also add a simple `LICENSE` file and a GitHub Actions CI workflow that builds the project and runs the example as a smoke test.
