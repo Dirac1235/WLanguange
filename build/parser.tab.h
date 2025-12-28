@@ -41,41 +41,54 @@
    enum yytokentype {
      NUMBER = 258,
      STRING = 259,
-     NEWLINE = 260,
-     PLUS = 261,
-     SUBTRACT = 262,
-     MULTIPLY = 263,
-     DIVIDE = 264,
-     MOD = 265,
-     LEFT_PAREN = 266,
-     RIGHT_PAREN = 267
+     IDENTIFIER = 260,
+     STR = 261,
+     BOOL = 262,
+     EQUAL = 263,
+     NUM = 264,
+     NEWLINE = 265,
+     PLUS = 266,
+     SUBTRACT = 267,
+     MULTIPLY = 268,
+     DIVIDE = 269,
+     MOD = 270,
+     LEFT_PAREN = 271,
+     RIGHT_PAREN = 272,
+     PRINT = 273
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
 #define STRING 259
-#define NEWLINE 260
-#define PLUS 261
-#define SUBTRACT 262
-#define MULTIPLY 263
-#define DIVIDE 264
-#define MOD 265
-#define LEFT_PAREN 266
-#define RIGHT_PAREN 267
+#define IDENTIFIER 260
+#define STR 261
+#define BOOL 262
+#define EQUAL 263
+#define NUM 264
+#define NEWLINE 265
+#define PLUS 266
+#define SUBTRACT 267
+#define MULTIPLY 268
+#define DIVIDE 269
+#define MOD 270
+#define LEFT_PAREN 271
+#define RIGHT_PAREN 272
+#define PRINT 273
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 22 "src/parser.y"
+#line 23 "src/parser.y"
 {
-  struct Expr *expr_val;
-  char* str_val;
-  long double fl_val;
+    struct Expr *expr_val;
+    struct Stmt *stmt_val;
+    char* str_val;
+    long double fl_val;
 }
 /* Line 1529 of yacc.c.  */
-#line 79 "build/parser.tab.h"
+#line 92 "build/parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -13,6 +13,8 @@ C_SRC = \
 	$(SRC_DIR)/ast.c \
 	$(SRC_DIR)/interpret.c \
 	$(SRC_DIR)/tools/input_accept.c\
+	$(SRC_DIR)/tools/hash_table.c\
+	$(SRC_DIR)/tools/key_generator.c\
 	$(SRC_DIR)/main.c
 
 all: $(INTERPRETER)

@@ -3,8 +3,8 @@
 #include "../include/helper.h"
 
 int yyparse();
-extern Expr **expr_root;
-extern size_t expr_root_count;
+extern Stmt **stmt_root;
+extern size_t stmt_root_count;
 
 extern FILE *yyin;
 
@@ -18,9 +18,10 @@ int main(int argc, char *argv[])
   FILE *fp = input_accept(argc, argv);
   yyin = fp;
   int status = yyparse();
+
   if (status == 0)
   {
-    interpret(expr_root, expr_root_count);
+    interpret(stmt_root, stmt_root_count);
   }
   else
   {

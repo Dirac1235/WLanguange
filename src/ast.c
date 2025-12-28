@@ -1,5 +1,6 @@
 #include "../include/ast.h"
 
+
 Token *numToken(TokenType op, long double lex)
 // TODO: handle numbers and other characters
 {
@@ -72,6 +73,41 @@ Expr *makeGroupExpr(Expr *inner)
 
   expr->group = g;
   return expr;
+}
+
+Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl)
+{
+  
+  Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
+  stmt->type = STMT_DECL;
+  DeclStmt *dst = (DeclStmt *)malloc(sizeof(DeclStmt));
+  stmt->decl_stmt = dst;
+  stmt->decl_stmt->type = type;
+  stmt->decl_stmt->expr = decl;
+  stmt->decl_stmt->identifier = identifier;
+  return stmt;
+}
+
+Stmt *makePrintStmt(Expr *expr)
+{
+  Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
+  stmt->type = STMT_PRINT;
+  PrintStmt *pst = (PrintStmt *)malloc(sizeof(PrintStmt));
+  stmt->print_stmt = pst;
+  stmt->print_stmt->expr = expr;
+  return stmt;
+}
+
+Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count)
+{
+  Stmt **tmp = realloc(stmt_root, (stmt_root_count + 1) * sizeof(Expr *));
+
+  if (!tmp)
+  {
+    fprintf(stdout, "out of memory");
+    exit(1);
+  }
+  return tmp;
 }
 
 char *find_op(TokenType type)

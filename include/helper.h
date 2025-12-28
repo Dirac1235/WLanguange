@@ -12,5 +12,7 @@
  * RETURN: Void
  */
 FILE* input_accept(int argc, char **argv);
+char *itoa(long double val);
+
 
 #endif

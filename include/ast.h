@@ -7,8 +7,21 @@
 #include <string.h>
 #include <sys/syslimits.h>
 #include "token.h"
+#include "hash_table.h"
 
 typedef struct Expr Expr;
+
+typedef struct
+{
+  NODE_TYPE type;
+  char *identifier;
+  Expr *expr;
+} DeclStmt;
+
+typedef struct
+{
+  Expr *expr;
+} PrintStmt;
 
 typedef struct Token
 {
@@ -20,7 +33,7 @@ typedef struct Token
 
 typedef struct Binary
 {
-  TYPE_EXPR type;
+  NODE_TYPE type;
   Token *token;
   Expr *left;
   Expr *right;
@@ -28,20 +41,20 @@ typedef struct Binary
 
 typedef struct Unary
 {
-  TYPE_EXPR type;
+  NODE_TYPE type;
   Token *token;
   Expr *expr;
 } Unary;
 
 typedef struct Group
 {
-  TYPE_EXPR type;
+  NODE_TYPE type;
   Expr *expr;
 } Group;
 
 typedef struct Expr
 {
-  TYPE_EXPR type;
+  NODE_TYPE type;
   union
   {
     Binary *binary;
@@ -51,11 +64,22 @@ typedef struct Expr
   };
 } Expr;
 
+typedef struct
+{
+  NODE_TYPE type;
+  union
+  {
+    PrintStmt *print_stmt;
+    DeclStmt *decl_stmt;
+  };
+} Stmt;
+
 char *find_op(TokenType type);
-Expr **expr_root;
-size_t expr_root_count;
+Stmt **stmt_root;
+size_t stmt_root_count;
 size_t line_number;
 size_t column_number;
+hash_table_t *ht;
 
 Token *numToken(TokenType op, long double lex);
 Token *strToken(TokenType op, char *lex);
@@ -64,8 +88,12 @@ Expr *numExpr(TokenType op, long double lex);
 Expr *makeUnaryExpr(TokenType op, Expr *right);
 Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right);
 Expr *makeGroupExpr(Expr *inner);
+Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
+Stmt *makePrintStmt(Expr *expr);
 
 void printAst(Expr **expr_lst, size_t expr_root_count);
-void interpret(Expr **expr, size_t expr_root_count);
+void interpret(Stmt **stmt_lst, size_t count);
+Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count);
+
 
 #endif

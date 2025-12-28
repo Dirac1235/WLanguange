@@ -1,5 +1,6 @@
 #ifndef TOKEN_H
 #define TOKEN_H
+
 typedef enum
 {
   TKN_LITERAL,
@@ -10,6 +11,7 @@ typedef enum
   TKN_OP_MUL,
   TKN_OP_DIV,
   TKN_OP_MOD
+   
 } TokenType;
 
 typedef enum
@@ -17,7 +19,13 @@ typedef enum
   EXPR_BINARY,
   EXPR_UNARY,
   EXPR_GROUP,
-  EXPR_TOKEN
-} TYPE_EXPR;
+  EXPR_TOKEN,
+  STMT_PRINT,
+  STMT_DECL,
+  STMT_NUM,
+  STMT_STR,
+  STMT_BOOL,
+  STMT_IFELSE
+} NODE_TYPE;
 
 #endif

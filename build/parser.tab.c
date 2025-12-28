@@ -68,27 +68,39 @@
    enum yytokentype {
      NUMBER = 258,
      STRING = 259,
-     NEWLINE = 260,
-     PLUS = 261,
-     SUBTRACT = 262,
-     MULTIPLY = 263,
-     DIVIDE = 264,
-     MOD = 265,
-     LEFT_PAREN = 266,
-     RIGHT_PAREN = 267
+     IDENTIFIER = 260,
+     STR = 261,
+     BOOL = 262,
+     EQUAL = 263,
+     NUM = 264,
+     NEWLINE = 265,
+     PLUS = 266,
+     SUBTRACT = 267,
+     MULTIPLY = 268,
+     DIVIDE = 269,
+     MOD = 270,
+     LEFT_PAREN = 271,
+     RIGHT_PAREN = 272,
+     PRINT = 273
    };
 #endif
 /* Tokens.  */
 #define NUMBER 258
 #define STRING 259
-#define NEWLINE 260
-#define PLUS 261
-#define SUBTRACT 262
-#define MULTIPLY 263
-#define DIVIDE 264
-#define MOD 265
-#define LEFT_PAREN 266
-#define RIGHT_PAREN 267
+#define IDENTIFIER 260
+#define STR 261
+#define BOOL 262
+#define EQUAL 263
+#define NUM 264
+#define NEWLINE 265
+#define PLUS 266
+#define SUBTRACT 267
+#define MULTIPLY 268
+#define DIVIDE 269
+#define MOD 270
+#define LEFT_PAREN 271
+#define RIGHT_PAREN 272
+#define PRINT 273
 
 
 
@@ -100,9 +112,10 @@
 #include <string.h>
 #include <math.h>
 #include "../include/ast.h"
+#include "../include/token.h"
 
-extern Expr **expr_root;
-extern size_t expr_root_count;
+extern Stmt **stmt_root;
+extern size_t stmt_root_count;
 
 extern size_t line_number;
 extern size_t column_number;
@@ -135,14 +148,15 @@ void yyerror(char *s) {
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 22 "src/parser.y"
+#line 23 "src/parser.y"
 {
-  struct Expr *expr_val;
-  char* str_val;
-  long double fl_val;
+    struct Expr *expr_val;
+    struct Stmt *stmt_val;
+    char* str_val;
+    long double fl_val;
 }
 /* Line 193 of yacc.c.  */
-#line 146 "build/parser.tab.c"
+#line 160 "build/parser.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -155,7 +169,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 159 "build/parser.tab.c"
+#line 173 "build/parser.tab.c"
 
 #ifdef short
 # undef short
@@ -368,22 +382,22 @@ union yyalloc
 #endif
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  8
+#define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   31
+#define YYLAST   47
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  13
+#define YYNTOKENS  19
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  4
+#define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  14
+#define YYNRULES  23
 /* YYNRULES -- Number of states.  */
-#define YYNSTATES  22
+#define YYNSTATES  45
 
 /* YYTRANSLATE(YYLEX) -- Bison symbol number corresponding to YYLEX.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   267
+#define YYMAXUTOK   273
 
 #define YYTRANSLATE(YYX)						\
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -417,7 +431,8 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,     9,    10,    11,    12
+       5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
+      15,    16,    17,    18
 };
 
 #if YYDEBUG
@@ -425,25 +440,30 @@ static const yytype_uint8 yytranslate[] =
    YYRHS.  */
 static const yytype_uint8 yyprhs[] =
 {
-       0,     0,     3,     5,     6,    10,    12,    13,    15,    17,
-      21,    25,    29,    33,    37
+       0,     0,     3,     5,     6,     9,    12,    15,    17,    19,
+      21,    23,    28,    33,    38,    43,    45,    47,    49,    53,
+      57,    61,    65,    69
 };
 
 /* YYRHS -- A `-1'-separated list of the rules' RHS.  */
 static const yytype_int8 yyrhs[] =
 {
-      14,     0,    -1,    15,    -1,    -1,    16,     5,    15,    -1,
-      16,    -1,    -1,     3,    -1,     4,    -1,    11,    16,    12,
-      -1,    16,     9,    16,    -1,    16,     8,    16,    -1,    16,
-       6,    16,    -1,    16,     7,    16,    -1,    16,    10,    16,
-      -1
+      20,     0,    -1,    21,    -1,    -1,    21,    22,    -1,    23,
+      10,    -1,    24,    10,    -1,    26,    -1,    27,    -1,    28,
+      -1,    25,    -1,    18,    16,    29,    17,    -1,     9,     5,
+       8,    29,    -1,     6,     5,     8,    29,    -1,     7,     5,
+       8,    29,    -1,     3,    -1,     4,    -1,     5,    -1,    16,
+      29,    17,    -1,    29,    14,    29,    -1,    29,    13,    29,
+      -1,    29,    11,    29,    -1,    29,    12,    29,    -1,    29,
+      15,    29,    -1
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    47,    47,    48,    50,    65,    77,    80,    81,    82,
-      83,    99,   115,   130,   145
+       0,    51,    51,    54,    56,    60,    61,    65,    66,    67,
+      71,    75,    84,    93,   102,   111,   112,   113,   114,   115,
+     132,   149,   165,   181
 };
 #endif
 
@@ -452,9 +472,11 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "NUMBER", "STRING", "NEWLINE", "PLUS",
-  "SUBTRACT", "MULTIPLY", "DIVIDE", "MOD", "LEFT_PAREN", "RIGHT_PAREN",
-  "$accept", "start", "expr_lst", "expr", 0
+  "$end", "error", "$undefined", "NUMBER", "STRING", "IDENTIFIER", "STR",
+  "BOOL", "EQUAL", "NUM", "NEWLINE", "PLUS", "SUBTRACT", "MULTIPLY",
+  "DIVIDE", "MOD", "LEFT_PAREN", "RIGHT_PAREN", "PRINT", "$accept",
+  "start", "program", "line", "declaration", "stmt", "printstmt",
+  "num_decl", "str_decl", "bool_decl", "expr", 0
 };
 #endif
 
@@ -464,22 +486,24 @@ static const char *const yytname[] =
 static const yytype_uint16 yytoknum[] =
 {
        0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
-     265,   266,   267
+     265,   266,   267,   268,   269,   270,   271,   272,   273
 };
 # endif
 
 /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    13,    14,    14,    15,    15,    15,    16,    16,    16,
-      16,    16,    16,    16,    16
+       0,    19,    20,    21,    21,    22,    22,    23,    23,    23,
+      24,    25,    26,    27,    28,    29,    29,    29,    29,    29,
+      29,    29,    29,    29
 };
 
 /* YYR2[YYN] -- Number of symbols composing right hand side of rule YYN.  */
 static const yytype_uint8 yyr2[] =
 {
-       0,     2,     1,     0,     3,     1,     0,     1,     1,     3,
-       3,     3,     3,     3,     3
+       0,     2,     1,     0,     2,     2,     2,     1,     1,     1,
+       1,     4,     4,     4,     4,     1,     1,     1,     3,     3,
+       3,     3,     3,     3
 };
 
 /* YYDEFACT[STATE-NAME] -- Default rule to reduce with in state
@@ -487,31 +511,37 @@ static const yytype_uint8 yyr2[] =
    means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       3,     7,     8,     0,     0,     2,     5,     0,     1,     6,
-       0,     0,     0,     0,     0,     9,     4,    12,    13,    11,
-      10,    14
+       3,     0,     2,     1,     0,     0,     0,     0,     4,     0,
+       0,    10,     7,     8,     9,     0,     0,     0,     0,     5,
+       6,     0,     0,     0,    15,    16,    17,     0,     0,    13,
+      14,    12,     0,     0,     0,     0,     0,     0,    11,    18,
+      21,    22,    20,    19,    23
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     4,     5,     6
+      -1,     1,     2,     8,     9,    10,    11,    12,    13,    14,
+      28
 };
 
 /* YYPACT[STATE-NUM] -- Index in YYTABLE of the portion describing
    STATE-NUM.  */
-#define YYPACT_NINF -8
+#define YYPACT_NINF -22
 static const yytype_int8 yypact[] =
 {
-       1,    -8,    -8,     1,     6,    -8,    15,     7,    -8,     1,
-       1,     1,     1,     1,     1,    -8,    -8,    -7,    -7,     8,
-       8,    20
+     -22,    10,    12,   -22,     6,    22,    24,     1,   -22,    26,
+      33,   -22,   -22,   -22,   -22,    36,    37,    38,     4,   -22,
+     -22,     4,     4,     4,   -22,   -22,   -22,     4,    11,    27,
+      27,    27,    20,     4,     4,     4,     4,     4,   -22,   -22,
+     -10,   -10,    32,    32,    27
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-      -8,    -8,    22,    -3
+     -22,   -22,   -22,   -22,   -22,   -22,   -22,   -22,   -22,   -22,
+     -21
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]].  What to do in state STATE-NUM.  If
@@ -521,27 +551,31 @@ static const yytype_int8 yypgoto[] =
 #define YYTABLE_NINF -1
 static const yytype_uint8 yytable[] =
 {
-       7,    12,    13,    14,     1,     2,     8,    17,    18,    19,
-      20,    21,     3,    10,    11,    12,    13,    14,    14,    15,
-       9,    10,    11,    12,    13,    14,    10,    11,    12,    13,
-      14,    16
+      29,    30,    31,    35,    36,    37,    32,    24,    25,    26,
+       3,    15,    40,    41,    42,    43,    44,    18,     4,     5,
+      27,     6,    33,    34,    35,    36,    37,    16,    38,    17,
+       7,    33,    34,    35,    36,    37,    19,    39,    33,    34,
+      35,    36,    37,    20,    21,    22,    23,    37
 };
 
 static const yytype_uint8 yycheck[] =
 {
-       3,     8,     9,    10,     3,     4,     0,    10,    11,    12,
-      13,    14,    11,     6,     7,     8,     9,    10,    10,    12,
-       5,     6,     7,     8,     9,    10,     6,     7,     8,     9,
-      10,     9
+      21,    22,    23,    13,    14,    15,    27,     3,     4,     5,
+       0,     5,    33,    34,    35,    36,    37,    16,     6,     7,
+      16,     9,    11,    12,    13,    14,    15,     5,    17,     5,
+      18,    11,    12,    13,    14,    15,    10,    17,    11,    12,
+      13,    14,    15,    10,     8,     8,     8,    15
 };
 
 /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
    symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,     3,     4,    11,    14,    15,    16,    16,     0,     5,
-       6,     7,     8,     9,    10,    12,    15,    16,    16,    16,
-      16,    16
+       0,    20,    21,     0,     6,     7,     9,    18,    22,    23,
+      24,    25,    26,    27,    28,     5,     5,     5,    16,    10,
+      10,     8,     8,     8,     3,     4,     5,    16,    29,    29,
+      29,    29,    29,    11,    12,    13,    14,    15,    17,    17,
+      29,    29,    29,    29,    29
 };
 
 #define yyerrok		(yyerrstatus = 0)
@@ -1355,168 +1389,162 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 2:
-#line 47 "src/parser.y"
-    {  ;}
-    break;
-
-  case 3:
-#line 48 "src/parser.y"
-    {  ;}
-    break;
-
-  case 4:
-#line 51 "src/parser.y"
+        case 11:
+#line 76 "src/parser.y"
     {
-            Expr **tmp = realloc(
-            expr_root,
-            (expr_root_count + 1) * sizeof(Expr *)
-            );
-
-            if (!tmp) {
-                yyerror("out of memory");
-                exit(1);
-            }
-
-            expr_root = tmp;
-            expr_root[expr_root_count++] = (yyvsp[(1) - (3)].expr_val);
-      ;}
+        Stmt *print = makePrintStmt((yyvsp[(3) - (4)].expr_val));
+        stmt_root = addStmt(stmt_root, stmt_root_count);
+        stmt_root[stmt_root_count++] = print;
+    ;}
     break;
 
-  case 5:
-#line 66 "src/parser.y"
+  case 12:
+#line 85 "src/parser.y"
     {
-                  expr_root = malloc(sizeof(Expr *));
-                  if (!expr_root) {
-                    yyerror("out of memory");
-                    exit(1);
-                  }
-
-                  expr_root[0] = (yyvsp[(1) - (1)].expr_val);
-                  expr_root_count = 1;
-            ;}
+        Stmt *num_d = makeDeclStmt(STMT_NUM, (yyvsp[(2) - (4)].str_val), (yyvsp[(4) - (4)].expr_val));
+        stmt_root = addStmt(stmt_root, stmt_root_count);
+        stmt_root[stmt_root_count++] = num_d;
+    ;}
     break;
 
-  case 6:
-#line 77 "src/parser.y"
-    {;}
+  case 13:
+#line 94 "src/parser.y"
+    {
+        Stmt *str_d = makeDeclStmt(STMT_STR, (yyvsp[(2) - (4)].str_val), (yyvsp[(4) - (4)].expr_val));
+        stmt_root = addStmt(stmt_root, stmt_root_count);
+        stmt_root[stmt_root_count++] = str_d;
+    ;}
     break;
 
-  case 7:
-#line 80 "src/parser.y"
-    { (yyval.expr_val) = numExpr(TKN_NUMBER, (yyvsp[(1) - (1)].fl_val));   ;}
+  case 14:
+#line 103 "src/parser.y"
+    {
+        Stmt *bool_d = makeDeclStmt(STMT_BOOL, (yyvsp[(2) - (4)].str_val), (yyvsp[(4) - (4)].expr_val));
+        stmt_root = addStmt(stmt_root, stmt_root_count);
+        stmt_root[stmt_root_count++] = bool_d;
+    ;}
     break;
 
-  case 8:
-#line 81 "src/parser.y"
-    { (yyval.expr_val) = strExpr(TKN_STRING, (yyvsp[(1) - (1)].str_val));  ;}
+  case 15:
+#line 111 "src/parser.y"
+    { (yyval.expr_val) = numExpr(TKN_NUMBER, (yyvsp[(1) - (1)].fl_val)); ;}
     break;
 
-  case 9:
-#line 82 "src/parser.y"
-    { (yyval.expr_val) = makeGroupExpr((yyvsp[(2) - (3)].expr_val));                  ;}
+  case 16:
+#line 112 "src/parser.y"
+    { (yyval.expr_val) = strExpr(TKN_STRING, (yyvsp[(1) - (1)].str_val)); ;}
     break;
 
-  case 10:
-#line 83 "src/parser.y"
+  case 17:
+#line 113 "src/parser.y"
+    { (yyval.expr_val) = strExpr(TKN_LITERAL, (yyvsp[(1) - (1)].str_val)); ;}
+    break;
+
+  case 18:
+#line 114 "src/parser.y"
+    { (yyval.expr_val) = makeGroupExpr((yyvsp[(2) - (3)].expr_val));       ;}
+    break;
+
+  case 19:
+#line 116 "src/parser.y"
     { 
-            if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
-                  (yyval.expr_val) = makeBinaryExpr(TKN_OP_DIV, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-            else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
-                  fprintf(
-                  stderr,
-                  "incompatible types '%s' and '%s' at line %zu\n",
-                  ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+        if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
+            (yyval.expr_val) = makeBinaryExpr(TKN_OP_DIV, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
+        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+            fprintf(
+            stderr,
+                "incompatible types '%s' and '%s' at line %zu\n",
+                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
                   line_number
                   );
 
             }
 
             
-            ;}
+    ;}
     break;
 
-  case 11:
-#line 99 "src/parser.y"
+  case 20:
+#line 133 "src/parser.y"
     { 
 
-            if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
-                  (yyval.expr_val) = makeBinaryExpr(TKN_OP_MUL, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-            else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
-                  fprintf(
-                  stderr,
-                  "incompatible types '%s' and '%s' at line %zu\n",
-                  ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  line_number
-                  );
+        if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
+            (yyval.expr_val) = makeBinaryExpr(TKN_OP_MUL, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
+        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+            fprintf(
+                stderr,
+                "incompatible types '%s' and '%s' at line %zu\n",
+                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                line_number
+            );
 
-            }
-            (yyval.expr_val) = makeBinaryExpr(TKN_OP_MUL, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val)); 
-            ;}
+        }
+        (yyval.expr_val) = makeBinaryExpr(TKN_OP_MUL, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val)); 
+    ;}
     break;
 
-  case 12:
-#line 115 "src/parser.y"
+  case 21:
+#line 150 "src/parser.y"
     { 
-            if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
-                  (yyval.expr_val) = makeBinaryExpr(TKN_OP_ADD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-            else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
-                  fprintf(
-                  stderr,
-                  "incompatible types '%s' and '%s' at line %zu\n",
-                  ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  line_number
-                  );
+        if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
+            (yyval.expr_val) = makeBinaryExpr(TKN_OP_ADD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
+        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+            fprintf(
+                stderr,
+                "incompatible types '%s' and '%s' at line %zu\n",
+                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                line_number
+            );
 
-            }
-            (yyval.expr_val) = makeBinaryExpr(TKN_OP_ADD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val)); 
-            ;}
+        }
+        (yyval.expr_val) = makeBinaryExpr(TKN_OP_ADD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val)); 
+    ;}
     break;
 
-  case 13:
-#line 130 "src/parser.y"
+  case 22:
+#line 166 "src/parser.y"
     { 
-            if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
-                  (yyval.expr_val) = makeBinaryExpr(TKN_OP_SUB, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-            else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
-                  fprintf(
-                  stderr,
-                  "incompatible types '%s' and '%s' at line %zu\n",
-                  ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  line_number
-                  );
+        if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
+            (yyval.expr_val) = makeBinaryExpr(TKN_OP_SUB, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
+        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+            fprintf(
+                stderr,
+                    "incompatible types '%s' and '%s' at line %zu\n",
+                    ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                    ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                    line_number
+                );
 
             }
             (yyval.expr_val) = makeBinaryExpr(TKN_OP_SUB, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val)); 
-            ;}
+    ;}
     break;
 
-  case 14:
-#line 145 "src/parser.y"
+  case 23:
+#line 182 "src/parser.y"
     { 
             if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
                   (yyval.expr_val) = makeBinaryExpr(TKN_OP_MOD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
             else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
-                  fprintf(
-                  stderr,
-                  "incompatible types '%s' and '%s' at line %zu\n",
-                  ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  line_number
-                  );
+                fprintf(
+                    stderr,
+                    "incompatible types '%s' and '%s' at line %zu\n",
+                    ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                    ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                    line_number
+                );
 
             }
             (yyval.expr_val) = makeBinaryExpr(TKN_OP_MOD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val)); 
-            ;}
+    ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1520 "build/parser.tab.c"
+#line 1548 "build/parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1730,7 +1758,7 @@ yyreturn:
 }
 
 
-#line 163 "src/parser.y"
+#line 200 "src/parser.y"
 
 
 
