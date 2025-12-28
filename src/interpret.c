@@ -18,7 +18,7 @@ long double interpretA(Expr *expr)
     case TKN_OP_DIV:
       if (right == 0)
       {
-        fprintf(stderr, "Division by zero is undefined at line: %zu \n ", line_number );
+        fprintf(stderr, "Division by zero is undefined at line: %zu \n", line_number );
         exit(69);
       }
       return left / right;

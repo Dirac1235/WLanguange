@@ -11,6 +11,7 @@ extern size_t line_number;
 extern size_t column_number;
 
 extern int yylex(void);
+
 void yyerror(char *s) {
   fprintf(stdout, "%s",s);
 };
@@ -76,8 +77,8 @@ expr_lst : expr NEWLINE expr_lst
     |  {}
       ;
 
-expr  : NUMBER                              { $$ = makeNumTokenExpr(TKN_NUMBER, $1);   }
-      | STRING                              { $$ = makeStrTokenExpr(TKN_STRING, $1);  }       
+expr  : NUMBER                              { $$ = numExpr(TKN_NUMBER, $1);   }
+      | STRING                              { $$ = strExpr(TKN_STRING, $1);  }       
       | LEFT_PAREN expr RIGHT_PAREN         { $$ = makeGroupExpr($2);                  }
       | expr DIVIDE expr                    { 
             if ($1->token->tkn == TKN_NUMBER && $3->token->tkn == TKN_NUMBER)

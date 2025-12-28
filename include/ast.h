@@ -1,32 +1,12 @@
 #ifndef AST_H
 #define AST_H
 
-
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syslimits.h>
-
-typedef enum
-{
-  TKN_LITERAL,
-  TKN_STRING,
-  TKN_NUMBER,
-  TKN_OP_ADD,
-  TKN_OP_SUB,
-  TKN_OP_MUL,
-  TKN_OP_DIV,
-  TKN_OP_MOD
-} TokenType;
-
-typedef enum
-{
-  EXPR_BINARY,
-  EXPR_UNARY,
-  EXPR_GROUP,
-  EXPR_TOKEN
-} TYPE_EXPR;
+#include "token.h"
 
 typedef struct Expr Expr;
 
@@ -77,10 +57,10 @@ size_t expr_root_count;
 size_t line_number;
 size_t column_number;
 
-Token *makeNumToken(TokenType op, long double lex);
-Token *makeStrToken(TokenType op, char *lex);
-Expr *makeStrTokenExpr(TokenType op, char *lex);
-Expr *makeNumTokenExpr(TokenType op, long double lex);
+Token *numToken(TokenType op, long double lex);
+Token *strToken(TokenType op, char *lex);
+Expr *strExpr(TokenType op, char *lex);
+Expr *numExpr(TokenType op, long double lex);
 Expr *makeUnaryExpr(TokenType op, Expr *right);
 Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right);
 Expr *makeGroupExpr(Expr *inner);

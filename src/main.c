@@ -1,22 +1,25 @@
 #include "../build/parser.tab.h"
 #include "../include/ast.h"
+#include "../include/helper.h"
 
 int yyparse();
 extern Expr **expr_root;
 extern size_t expr_root_count;
+
+extern FILE *yyin;
 
 int yywrap()
 {
   return 1;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
+  FILE *fp = input_accept(argc, argv);
+  yyin = fp;
   int status = yyparse();
   if (status == 0)
   {
-    printf("Parsing successful!\n");
-    /* Retrieve the final output from the global variable */
     interpret(expr_root, expr_root_count);
   }
   else

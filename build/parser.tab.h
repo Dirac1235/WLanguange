@@ -68,7 +68,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 21 "src/parser.y"
+#line 22 "src/parser.y"
 {
   struct Expr *expr_val;
   char* str_val;

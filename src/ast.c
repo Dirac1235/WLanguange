@@ -1,47 +1,47 @@
 #include "../include/ast.h"
 
-Token *makeNumToken(TokenType op, long double lex)
+Token *numToken(TokenType op, long double lex)
 // TODO: handle numbers and other characters
 {
-  Token *t = (Token *) malloc(sizeof(Token));
+  Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = op;
   t->f_lexeme = lex;
   return t;
 }
 
-Token *makeStrToken(TokenType op, char *lex)
+Token *strToken(TokenType op, char *lex)
 // TODO: handle numbers and other characters
 {
-  Token *t = (Token *) malloc(sizeof(Token));
+  Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = op;
   t->s_lexeme = strdup(lex);
   return t;
 }
 
-Expr *makeStrTokenExpr(TokenType op, char *lex)
+Expr *strExpr(TokenType op, char *lex)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
-  expr->token = makeStrToken(op, lex);
+  expr->token = strToken(op, lex);
   return expr;
 }
 
-Expr *makeNumTokenExpr(TokenType op, long double lex)
+Expr *numExpr(TokenType op, long double lex)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
-  expr->token = makeNumToken(op, lex);
+  expr->token = numToken(op, lex);
   return expr;
 }
 
 Expr *makeUnaryExpr(TokenType op, Expr *right)
 {
-  Expr *expr = (Expr *) malloc(sizeof(Expr));
+  Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_UNARY;
 
-  Unary *u = (Unary *) malloc(sizeof(Unary));
+  Unary *u = (Unary *)malloc(sizeof(Unary));
 
-  u->token = makeStrToken(op, find_op(op));
+  u->token = strToken(op, find_op(op));
   u->expr = right;
 
   expr->unary = u;
@@ -54,7 +54,7 @@ Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right)
   expr->type = EXPR_BINARY;
 
   Binary *b = (Binary *)malloc(sizeof(Binary));
-  b->token = makeStrToken(op, find_op(op));
+  b->token = strToken(op, find_op(op));
   b->left = left;
   b->right = right;
 

@@ -2,6 +2,7 @@ CC      = gcc
 CFLAGS  = -Wall -Wextra -g
 
 SRC_DIR = src
+
 GEN_DIR = build
 
 INTERPRETER  = interpret
@@ -11,6 +12,7 @@ C_SRC = \
 	$(GEN_DIR)/lex.yy.c \
 	$(SRC_DIR)/ast.c \
 	$(SRC_DIR)/interpret.c \
+	$(SRC_DIR)/tools/input_accept.c\
 	$(SRC_DIR)/main.c
 
 all: $(INTERPRETER)

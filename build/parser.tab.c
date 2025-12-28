@@ -108,6 +108,7 @@ extern size_t line_number;
 extern size_t column_number;
 
 extern int yylex(void);
+
 void yyerror(char *s) {
   fprintf(stdout, "%s",s);
 };
@@ -134,14 +135,14 @@ void yyerror(char *s) {
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 21 "src/parser.y"
+#line 22 "src/parser.y"
 {
   struct Expr *expr_val;
   char* str_val;
   long double fl_val;
 }
 /* Line 193 of yacc.c.  */
-#line 145 "build/parser.tab.c"
+#line 146 "build/parser.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -154,7 +155,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 158 "build/parser.tab.c"
+#line 159 "build/parser.tab.c"
 
 #ifdef short
 # undef short
@@ -441,8 +442,8 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    46,    46,    47,    49,    64,    76,    79,    80,    81,
-      82,    98,   114,   129,   144
+       0,    47,    47,    48,    50,    65,    77,    80,    81,    82,
+      83,    99,   115,   130,   145
 };
 #endif
 
@@ -1355,17 +1356,17 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 46 "src/parser.y"
-    {  ;}
-    break;
-
-  case 3:
 #line 47 "src/parser.y"
     {  ;}
     break;
 
+  case 3:
+#line 48 "src/parser.y"
+    {  ;}
+    break;
+
   case 4:
-#line 50 "src/parser.y"
+#line 51 "src/parser.y"
     {
             Expr **tmp = realloc(
             expr_root,
@@ -1383,7 +1384,7 @@ yyreduce:
     break;
 
   case 5:
-#line 65 "src/parser.y"
+#line 66 "src/parser.y"
     {
                   expr_root = malloc(sizeof(Expr *));
                   if (!expr_root) {
@@ -1397,27 +1398,27 @@ yyreduce:
     break;
 
   case 6:
-#line 76 "src/parser.y"
+#line 77 "src/parser.y"
     {;}
     break;
 
   case 7:
-#line 79 "src/parser.y"
-    { (yyval.expr_val) = makeNumTokenExpr(TKN_NUMBER, (yyvsp[(1) - (1)].fl_val));   ;}
+#line 80 "src/parser.y"
+    { (yyval.expr_val) = numExpr(TKN_NUMBER, (yyvsp[(1) - (1)].fl_val));   ;}
     break;
 
   case 8:
-#line 80 "src/parser.y"
-    { (yyval.expr_val) = makeStrTokenExpr(TKN_STRING, (yyvsp[(1) - (1)].str_val));  ;}
+#line 81 "src/parser.y"
+    { (yyval.expr_val) = strExpr(TKN_STRING, (yyvsp[(1) - (1)].str_val));  ;}
     break;
 
   case 9:
-#line 81 "src/parser.y"
+#line 82 "src/parser.y"
     { (yyval.expr_val) = makeGroupExpr((yyvsp[(2) - (3)].expr_val));                  ;}
     break;
 
   case 10:
-#line 82 "src/parser.y"
+#line 83 "src/parser.y"
     { 
             if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
                   (yyval.expr_val) = makeBinaryExpr(TKN_OP_DIV, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
@@ -1437,7 +1438,7 @@ yyreduce:
     break;
 
   case 11:
-#line 98 "src/parser.y"
+#line 99 "src/parser.y"
     { 
 
             if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
@@ -1457,7 +1458,7 @@ yyreduce:
     break;
 
   case 12:
-#line 114 "src/parser.y"
+#line 115 "src/parser.y"
     { 
             if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
                   (yyval.expr_val) = makeBinaryExpr(TKN_OP_ADD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
@@ -1476,7 +1477,7 @@ yyreduce:
     break;
 
   case 13:
-#line 129 "src/parser.y"
+#line 130 "src/parser.y"
     { 
             if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
                   (yyval.expr_val) = makeBinaryExpr(TKN_OP_SUB, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
@@ -1495,7 +1496,7 @@ yyreduce:
     break;
 
   case 14:
-#line 144 "src/parser.y"
+#line 145 "src/parser.y"
     { 
             if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_NUMBER && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_NUMBER)
                   (yyval.expr_val) = makeBinaryExpr(TKN_OP_MOD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
@@ -1515,7 +1516,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1519 "build/parser.tab.c"
+#line 1520 "build/parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1729,7 +1730,7 @@ yyreturn:
 }
 
 
-#line 162 "src/parser.y"
+#line 163 "src/parser.y"
 
 
 

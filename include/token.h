@@ -1,0 +1,23 @@
+#ifndef TOKEN_H
+#define TOKEN_H
+typedef enum
+{
+  TKN_LITERAL,
+  TKN_STRING,
+  TKN_NUMBER,
+  TKN_OP_ADD,
+  TKN_OP_SUB,
+  TKN_OP_MUL,
+  TKN_OP_DIV,
+  TKN_OP_MOD
+} TokenType;
+
+typedef enum
+{
+  EXPR_BINARY,
+  EXPR_UNARY,
+  EXPR_GROUP,
+  EXPR_TOKEN
+} TYPE_EXPR;
+
+#endif
