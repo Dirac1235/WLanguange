@@ -1,12 +1,23 @@
 #include "../include/ast.h"
 
+extern hash_table_t *ht;
 
 Token *numToken(TokenType op, long double lex)
 // TODO: handle numbers and other characters
 {
   Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = op;
-  t->f_lexeme = lex;
+  switch (t->tkn)
+  {
+  case TKN_INT:
+    t->i_lexeme = lex;
+    break;
+  case TKN_DOUBLE:
+    t->f_lexeme = lex;
+    break;
+  default:
+    break;
+  }
   return t;
 }
 
@@ -17,6 +28,16 @@ Token *strToken(TokenType op, char *lex)
   t->tkn = op;
   t->s_lexeme = strdup(lex);
   return t;
+}
+
+Expr *litExpr(TokenType tkn, char *lit) {
+  Expr *expr = (Expr *)malloc(sizeof(Expr));
+  expr->type = EXPR_TOKEN;
+  Token *t = (Token *)malloc(sizeof(Token));
+  expr->token = t;
+  expr->token->tkn = tkn;
+  expr->token->literal = strdup(lit);
+  return expr;
 }
 
 Expr *strExpr(TokenType op, char *lex)
@@ -83,6 +104,17 @@ Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl)
   DeclStmt *dst = (DeclStmt *)malloc(sizeof(DeclStmt));
   stmt->decl_stmt = dst;
   stmt->decl_stmt->type = type;
+  stmt->decl_stmt->expr = decl;
+  stmt->decl_stmt->identifier = identifier;
+  return stmt;
+}
+
+Stmt *makeAssStmt(char *identifier, Expr *decl)
+{
+  Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
+  stmt->type = STMT_ASS;
+  DeclStmt *dst = (DeclStmt *)malloc(sizeof(DeclStmt));
+  stmt->decl_stmt = dst;
   stmt->decl_stmt->expr = decl;
   stmt->decl_stmt->identifier = identifier;
   return stmt;

@@ -6,7 +6,7 @@ A small interpreter/parser project implemented with Flex (lex) and Bison (yacc).
 
 - `src/` — implementation sources: `ast.c`, `error.c`, `interpret.c`, `main.c`, `printAst.c`, `lex.l`, `parser.y`, etc.
 - `include/` — public headers such as `ast.h`, `error.h`.
-- `examples/` — example input files (e.g. `calc.n`).
+- `examples/` — example input files (e.g. `calc.w`).
 - `build/` — generated build artifacts (contains `parser.tab.c`, `lex.yy.c`, etc.).
 - top-level files: `Makefile`, `lex.yy.c`, `parser.tab.c`, `parser.tab.h`, `interpret` (built binary)
 
@@ -50,15 +50,15 @@ Run the interpreter against an example file or via standard input.
 From project root (assuming `interpret` is in PATH or current directory):
 
 ```bash
-./interpret examples/calc.n
+./interpret examples/calc.w
 # or
-cat examples/calc.n | ./interpret
+cat examples/calc.w | ./interpret
 ```
 
 If the binary lives in `build/`:
 
 ```bash
-./build/interpret examples/calc.n
+./build/interpret examples/calc.w
 ```
 
 ## Project internals (for contributors)
@@ -73,7 +73,7 @@ When modifying grammar or lexer files, regenerate `parser.tab.c`/`parser.tab.h` 
 
 ## Examples
 
-See `examples/calc.n` for a small sample program. The language supports binary operators, parentheses, and basic expressions. Use `printAst.c` for debugging AST construction.
+See `examples/calc.w` for a small sample program. The language supports binary operators, parentheses, and basic expressions. Use `printAst.c` for debugging AST construction.
 
 ## Tests and CI
 

@@ -10,14 +10,16 @@
 
 
 %%
-"num"                             column_number += 3; return NUM;
+"int"                             column_number += 3; return INT;
+"double"                          column_number += 6; return DOUBLE;
 "str"                             column_number += 3; return STR;
 "bool"                            column_number += 4; return BOOL;
 "print"                           column_number += 5; return PRINT;
 
-[0-9]+                            yylval.fl_val=atoi(yytext); column_number += strlen(yytext); return NUMBER;
-[a-zA-Z_][a-zA-Z0-9_]*            yylval.str_val=strdup(yytext); column_number += strlen(yytext); return IDENTIFIER;
-"\""([^"\\]|\\.)*"\""             yylval.str_val=strdup(yytext); column_number += strlen(yytext); return STRING;
+[0-9]+                            yylval.i_val=atoi(yytext);             column_number += yyleng; return INUMBER;
+[0-9]+\.[0-9]+                    yylval.d_val=strtod(yytext, NULL);    column_number += yyleng; return DNUMBER;
+[a-zA-Z_][a-zA-Z0-9_]*            yylval.str_val=strdup(yytext);         column_number += yyleng; return IDENTIFIER;
+"\""([^"\\]|\\.)*"\""             yylval.str_val=strdup(yytext);         column_number += yyleng; return STRING;
 
 
 "\+"                              column_number++; return PLUS;

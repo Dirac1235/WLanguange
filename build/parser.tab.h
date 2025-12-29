@@ -39,56 +39,63 @@
    /* Put the tokens into the symbol table, so that GDB and other debuggers
       know about them.  */
    enum yytokentype {
-     NUMBER = 258,
-     STRING = 259,
-     IDENTIFIER = 260,
-     STR = 261,
-     BOOL = 262,
-     EQUAL = 263,
-     NUM = 264,
-     NEWLINE = 265,
-     PLUS = 266,
-     SUBTRACT = 267,
-     MULTIPLY = 268,
-     DIVIDE = 269,
-     MOD = 270,
-     LEFT_PAREN = 271,
-     RIGHT_PAREN = 272,
-     PRINT = 273
+     INT = 258,
+     DOUBLE = 259,
+     STR = 260,
+     BOOL = 261,
+     EQUAL = 262,
+     NUM = 263,
+     INUMBER = 264,
+     DNUMBER = 265,
+     STRING = 266,
+     IDENTIFIER = 267,
+     NEWLINE = 268,
+     PLUS = 269,
+     SUBTRACT = 270,
+     MULTIPLY = 271,
+     DIVIDE = 272,
+     MOD = 273,
+     PRINT = 274,
+     LEFT_PAREN = 275,
+     RIGHT_PAREN = 276
    };
 #endif
 /* Tokens.  */
-#define NUMBER 258
-#define STRING 259
-#define IDENTIFIER 260
-#define STR 261
-#define BOOL 262
-#define EQUAL 263
-#define NUM 264
-#define NEWLINE 265
-#define PLUS 266
-#define SUBTRACT 267
-#define MULTIPLY 268
-#define DIVIDE 269
-#define MOD 270
-#define LEFT_PAREN 271
-#define RIGHT_PAREN 272
-#define PRINT 273
+#define INT 258
+#define DOUBLE 259
+#define STR 260
+#define BOOL 261
+#define EQUAL 262
+#define NUM 263
+#define INUMBER 264
+#define DNUMBER 265
+#define STRING 266
+#define IDENTIFIER 267
+#define NEWLINE 268
+#define PLUS 269
+#define SUBTRACT 270
+#define MULTIPLY 271
+#define DIVIDE 272
+#define MOD 273
+#define PRINT 274
+#define LEFT_PAREN 275
+#define RIGHT_PAREN 276
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 23 "src/parser.y"
+#line 19 "src/parser.y"
 {
     struct Expr *expr_val;
     struct Stmt *stmt_val;
     char* str_val;
-    long double fl_val;
+    int i_val;
+    double d_val;
 }
 /* Line 1529 of yacc.c.  */
-#line 92 "build/parser.tab.h"
+#line 99 "build/parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

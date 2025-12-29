@@ -1,52 +1,152 @@
-#include "../include/ast.h"
-#include "../include/hash_table.h"
-#include "../include/helper.h"
+#include "../include/global.h"
 
 extern size_t line_number;
 extern size_t column_number;
 extern hash_table_t *ht;
 #define HASH_TABLE_SIZE 1024;
 
-long double evaluate(hash_table_t *ht, Expr *expr)
+Object *evaluate(hash_table_t *ht, Expr *expr)
 {
   if (expr->type == EXPR_BINARY)
   {
-    long double left = evaluate(ht, expr->binary->left);
-    long double right = evaluate(ht, expr->binary->right);
+    Object *left = evaluate(ht, expr->binary->left);
+    Object *right = evaluate(ht, expr->binary->right);
     switch (expr->binary->token->tkn)
     {
     case TKN_OP_ADD:
-      return left + right;
-    case TKN_OP_SUB:
-      return left - right;
-    case TKN_OP_DIV:
-      if (right == 0)
+      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE))
       {
-        fprintf(stderr, "Division by zero is undefined at line: %zu \n", line_number);
-        exit(69);
+        int val = left->data.i + right->data.i;
+        Object *obj = makeObj(left->type);
+        obj->data.i = val;
+        return obj;
       }
-      return left / right;
+      else if (left->type == TYPE_STR && right->type == TYPE_INT)
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '+' on types str and int");
+        exit(1);
+      }
+      else if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && right->type == TYPE_STR)
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '+' on types int and str");
+        exit(1);
+      }
+      else
+      {
+        char *val = concat(left->data.s, right->data.s);
+        Object *obj = makeObj(left->type);
+        obj->data.s = val;
+        return obj;
+      }
+    case TKN_OP_SUB:
+      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE))
+      {
+        int val = left->data.i - right->data.i;
+        Object *obj = makeObj(left->type);
+        obj->data.i = val;
+        return obj;
+      }
+      else if (left->type == TYPE_STR && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '-' on types str and int");
+      }
+      else if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && right->type == TYPE_STR)
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '-' on types int and str");
+      }
+      else
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '-' on types str and str");
+      }
+    case TKN_OP_DIV:
+      if (right->data.i == 0)
+      {
+        fprintf(stderr, "DivisionByZeroError: Division by zero is undefined at line: %zu \n", line_number);
+        exit(1);
+      }
+      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE))
+      {
+      
+        int val = left->data.d / right->data.d;
+        Object *obj = makeObj(left->type);
+        obj->data.i = val;
+        return obj;
+      }
+      else if (left->type == TYPE_STR && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '/' on types str and int");
+        exit(1);
+      }
+      else if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && right->type == TYPE_STR)
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '/' on types int and str");
+        exit(1);
+      }
+      else
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '/' on types str and str");
+        exit(1);
+      }
     case TKN_OP_MUL:
-      return left * right;
+      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE) )
+      {
+        int val = left->data.d + right->data.d;
+        Object *obj = makeObj(left->type);
+        obj->data.i = val;
+        return obj;
+      }
+      else if (left->type == TYPE_STR && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '*' on types str and int");
+        exit(1);
+      }
+      else if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && right->type == TYPE_STR)
+      {
+        // TODO: add mulitplication of strings
+
+        fprintf(stderr, "TypeError: Unsupported Operand '*' on types int and str");
+        exit(1);
+      }
+      else
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '*' on types str and str");
+        exit(1);
+      }
     default:
-      fprintf(stderr, "Wrong Operator at line: %zu where: %s\n", line_number, expr->binary->token->s_lexeme);
-      exit(68);
+      fprintf(stderr, "SyntaxError: Wrong Operator at line: %zu where: %s\n", line_number, expr->binary->token->s_lexeme);
+      exit(1);
     }
   }
   else if (expr->type == EXPR_UNARY)
   {
-    long double val = evaluate(ht, expr->unary->expr);
+    Object *val = evaluate(ht, expr->unary->expr);
     switch (expr->binary->token->tkn)
     {
     case TKN_OP_ADD:
       return val;
     case TKN_OP_SUB:
-      return -val;
+      if (val->type == TYPE_INT)
+      {
+        val->data.i *= -1;
+      }
+      else if (val->type == TYPE_DOUBLE)
+      {
+        val->data.d *= -1;
+      }
+      else
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '-' on types str");
+        exit(1);
+      }
     case TKN_OP_DIV:
+      fprintf(stderr, "TypeError: Unsupported Operand '/' on types str\n");
+      exit(1);
     case TKN_OP_MUL:
+      fprintf(stderr, "TypeError: Unsupported Operand '*' on types str\n");
+      exit(1);
     default:
-      fprintf(stderr, "Wrong Operator \n");
-      exit(68);
+      fprintf(stderr, "TypeError: Unsupported Operand  on types str\n");
+      exit(1);
     }
   }
   else if (expr->type == EXPR_GROUP)
@@ -55,39 +155,77 @@ long double evaluate(hash_table_t *ht, Expr *expr)
   }
   else if (expr->type == EXPR_TOKEN)
   {
-    if (expr->token->tkn == TKN_NUMBER)
-      return expr->token->f_lexeme;
+    if (expr->token->tkn == TKN_INT)
+    {
+
+      Object *obj = makeObj(TYPE_INT);
+      obj->data.i = expr->token->i_lexeme;
+      return obj;
+    }
+    else if (expr->token->tkn == TKN_STRING)
+    {
+      Object *obj = makeObj(TYPE_STR);
+      obj->data.s = expr->token->s_lexeme;
+      return obj;
+    }
+
     else if (expr->token->tkn == TKN_LITERAL)
     {
-      char *value = hash_table_get(ht, expr->token->s_lexeme);
+      hash_table_print(ht);
+      Object *value = hash_table_get(ht, expr->token->literal);
       if (!value)
       {
-        fprintf(stderr, "Runtime error: undefined variable '%s'\n",
+        fprintf(stderr, "RuntimeError: undefined variable '%s'\n",
                 expr->token->literal);
         exit(1);
       }
-      long double num = strtold(value, NULL);
 
-      return num;
+      return value;
     }
-    else
-      return expr->token->f_lexeme;
   }
   fprintf(stderr, "Wrong Operator \n");
-  exit(68);
+  exit(1);
 }
 
 void execute(Stmt *stmt)
 {
   if (stmt->type == STMT_PRINT)
   {
-    printf("%LF \n", evaluate(ht, stmt->print_stmt->expr));
+    Object *obj = evaluate(ht, stmt->print_stmt->expr);
+    switch(obj->type) {
+      case TYPE_INT:
+        
+        printf("%d\n", obj->data.i);
+        break;
+      case TYPE_DOUBLE:
+        printf("%f\n", obj->data.d);
+        break;
+      case TYPE_STR:
+        printf("%s\n", obj->data.s);
+        break;
+      default:
+        fprintf(stderr, "Error while printing");
+        exit(1);
+    }
+    
   }
   else if (stmt->type == STMT_DECL)
   {
     char *identifier = stmt->decl_stmt->identifier;
-    long double eval_res = evaluate(ht, stmt->decl_stmt->expr);
-    hash_table_set(ht, identifier, itoa(eval_res));
+    Object *eval_res = evaluate(ht, stmt->decl_stmt->expr);
+    hash_table_set(ht, identifier, eval_res);
+  }
+  else if (stmt->type == STMT_ASS)
+  {
+    char *identifier = stmt->decl_stmt->identifier;
+    Object *value = hash_table_get(ht, identifier);
+    if (!value)
+    {
+      fprintf(stderr, "Runtime error: undefined variable '%s'\n", identifier);
+      exit(1);
+    }
+    Object *eval_res = evaluate(ht, stmt->decl_stmt->expr);
+    hash_table_set(ht, identifier, eval_res);
   }
 }
 

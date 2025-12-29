@@ -1,6 +1,5 @@
 #include "../build/parser.tab.h"
-#include "../include/ast.h"
-#include "../include/helper.h"
+#include "../include/global.h"
 
 int yyparse();
 extern Stmt **stmt_root;

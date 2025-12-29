@@ -1,4 +1,4 @@
-#include "../../include/helper.h"
+#include "../../include/global.h"
 
 FILE* input_accept(int argc, char **argv)
 {
@@ -58,4 +58,18 @@ FILE* input_accept(int argc, char **argv)
   fp = fopen(file_path, "r");
   return fp;
   
+}
+
+Object *makeObj(ObjectType type)
+{
+  Object *obj = (Object *)malloc(sizeof(Object));
+  obj->type = type;
+  return obj;
+}
+
+char *concat(char *left, char *right) {
+  size_t t_len = strlen(left) + strlen(right);
+  char *hold = malloc(sizeof(char) * t_len);
+  snprintf(hold, t_len, "%s%s", left, right);
+  return hold;
 }

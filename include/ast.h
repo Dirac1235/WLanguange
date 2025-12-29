@@ -1,5 +1,5 @@
-#ifndef AST_H
-#define AST_H
+#ifndef AST_H_
+#define AST_H_
 
 #include <string.h>
 #include <stdio.h>
@@ -26,7 +26,8 @@ typedef struct
 typedef struct Token
 {
   TokenType tkn;
-  long double f_lexeme;
+  int i_lexeme;
+  double f_lexeme;
   char *s_lexeme;
   char *literal;
 } Token;
@@ -85,11 +86,15 @@ Token *numToken(TokenType op, long double lex);
 Token *strToken(TokenType op, char *lex);
 Expr *strExpr(TokenType op, char *lex);
 Expr *numExpr(TokenType op, long double lex);
+Expr *litExpr(TokenType tkn, char *lit);
+
 Expr *makeUnaryExpr(TokenType op, Expr *right);
 Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right);
 Expr *makeGroupExpr(Expr *inner);
 Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
 Stmt *makePrintStmt(Expr *expr);
+Stmt *makeAssStmt(char *identifier, Expr *decl);
+
 
 void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(Stmt **stmt_lst, size_t count);

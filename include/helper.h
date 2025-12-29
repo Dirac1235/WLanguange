@@ -1,9 +1,7 @@
-#ifndef HELPER_H
-#define HELPER_H
+#ifndef HELPER_H_
+#define HELPER_H_
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+
 
 /**
  * input_accept - accepts command line args and process it
@@ -11,8 +9,12 @@
  * @argv: List containing hte command line args
  * RETURN: Void
  */
+
 FILE* input_accept(int argc, char **argv);
 char *itoa(long double val);
+Object *makeObj(ObjectType type);
+char *concat(char *left, char *right);
+
 
 
 #endif
