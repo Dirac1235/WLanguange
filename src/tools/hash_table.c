@@ -5,7 +5,7 @@
  * @size: the size of the hash table
  *
  * Return: hash table with the given size
-*/
+ */
 hash_table_t *hash_table_create(unsigned long int size)
 {
 	hash_table_t *table = NULL;
@@ -34,8 +34,8 @@ hash_table_t *hash_table_create(unsigned long int size)
  * @value: is the data that is ascociated with the key
  *
  * Return: 1 if success 0 if not
-*/
-int hash_table_set(hash_table_t *ht, const char *key, const char *value)
+ */
+int hash_table_set(hash_table_t *ht, const char *key, Object *value)
 {
 	unsigned long int index;
 	hash_node_t *new_node = NULL;
@@ -44,19 +44,15 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
 	if (ht == NULL || key == NULL || value == NULL || strcmp(key, "") == 0)
 		return (0);
 
-	index = key_index((unsigned char *) key, ht->size);
+	index = key_index((unsigned char *)key, ht->size);
 	current_node = ht->array[index];
 
 	for (; current_node != NULL; current_node = current_node->next)
 	{
 		if (strcmp(current_node->key, key) == 0)
 		{
-			if (strcmp(current_node->value, value) != 0)
-			{
-				free(current_node->value);
-				current_node->value = strdup(value);
-			}
-		return (1);
+			current_node->value = value;
+			return (1);
 		}
 	}
 
@@ -76,7 +72,7 @@ int hash_table_set(hash_table_t *ht, const char *key, const char *value)
  *
  * Return: pointer to new_node node else NULL.
  */
-hash_node_t *c_node(const char *key, const char *value)
+hash_node_t *c_node(const char *key, Object *value)
 {
 	hash_node_t *new_node;
 
@@ -96,7 +92,7 @@ hash_node_t *c_node(const char *key, const char *value)
 		return (NULL);
 	}
 
-	new_node->value = strdup(value);
+	new_node->value = value;
 
 	if (new_node->value == NULL)
 	{
@@ -115,8 +111,8 @@ hash_node_t *c_node(const char *key, const char *value)
  * @key: the key which we find the value
  *
  * Return: NULL if ke not found else value associated with the key
-*/
-char *hash_table_get(const hash_table_t *ht, const char *key)
+ */
+Object *hash_table_get(const hash_table_t *ht, const char *key)
 {
 	unsigned long int index;
 	hash_node_t *current_node = NULL;
@@ -124,7 +120,7 @@ char *hash_table_get(const hash_table_t *ht, const char *key)
 	if (ht == NULL || key == NULL || strcmp(key, "") == 0)
 		return (0);
 
-	index = key_index((unsigned char *) key, ht->size);
+	index = key_index((unsigned char *)key, ht->size);
 	current_node = ht->array[index];
 
 	if (current_node == NULL)
@@ -142,7 +138,7 @@ char *hash_table_get(const hash_table_t *ht, const char *key)
  * hash_table_print - prints a hash table.
  * @ht: hash table
  *
-*/
+ */
 void hash_table_print(const hash_table_t *ht)
 {
 	hash_node_t *node = NULL;
@@ -160,18 +156,60 @@ void hash_table_print(const hash_table_t *ht)
 		for (; node != NULL; node = node->next)
 		{
 			printf("%s'%s': '%s'", n == 0 ? "" : ", ",
-					   node->key, node->value), n++;
-				n++;
+						 node->key, format_obj(node->value)),
+					n++;
+			n++;
 		}
-
 	}
 	printf("}\n");
 }
+/**
+ * format_obj - prints the data in object
+ * @obj: object to be printed
+ */
+char *format_obj(Object *obj)
+{
+	if (!obj)
+		return NULL;
 
+	char *hold = malloc(128);
+	if (!hold)
+		return NULL;
+
+	switch (obj->type)
+	{
+	case TYPE_INT:
+		snprintf(
+				hold,
+				128,
+				"int : %d ",
+				obj->data.i);
+		break;
+	case TYPE_DOUBLE:
+		snprintf(
+				hold,
+				128,
+				"double : %f ",
+				obj->data.d);
+		break;
+	case TYPE_STR:
+		snprintf(
+				hold,
+				128,
+				"string : %s ",
+				obj->data.s);
+		break;
+	default:
+			fprintf(stderr, "Unknown type");
+			exit(1);
+	}
+
+	return hold;
+}
 /**
  * hash_table_delete - deletes a hash table.
  * @ht: hash table to be deleted
-*/
+ */
 void hash_table_delete(hash_table_t *ht)
 {
 	unsigned long int j;
@@ -191,7 +229,9 @@ void hash_table_delete(hash_table_t *ht)
 			holder = node;
 			node = holder->next;
 			free(holder->key);
-			free(holder->value);
+
+			if (holder->value->data.s)
+				free(holder->value->data.s);
 			free(holder);
 		}
 		free(node);
