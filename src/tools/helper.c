@@ -1,6 +1,6 @@
 #include "../../include/global.h"
 
-FILE* input_accept(int argc, char **argv)
+FILE *input_accept(int argc, char **argv)
 {
   char *file_path;
   char *arguments;
@@ -57,7 +57,6 @@ FILE* input_accept(int argc, char **argv)
 
   fp = fopen(file_path, "r");
   return fp;
-  
 }
 
 Object *makeObj(ObjectType type)
@@ -67,9 +66,97 @@ Object *makeObj(ObjectType type)
   return obj;
 }
 
-char *concat(char *left, char *right) {
+char *concat(char *left, char *right)
+{
   size_t t_len = strlen(left) + strlen(right);
   char *hold = malloc(sizeof(char) * (t_len + 1));
   snprintf(hold, t_len + 1, "%s%s", left, right);
   return hold;
+}
+char *mul_str(char *s, int val) {
+  char *res = "";
+  while (val > 0) {
+    res = concat(res, s);
+    val--;
+  }
+  return res;
+}
+
+char *tt_to_str(TokenType type)
+{
+  switch (type)
+  {
+  case TKN_LITERAL:
+    return "Literal";
+  case TKN_STRING:
+    return "String";
+  case TKN_INT:
+    return "Int";
+  case TKN_DOUBLE:
+    return "Double";
+  case TKN_OP_ADD:
+    return "+";
+  case TKN_OP_SUB:
+    return "-";
+  case TKN_OP_MUL:
+    return "*";
+  case TKN_OP_DIV:
+    return "/";
+  case TKN_OP_MOD:
+    return "%%";
+  default:
+    fprintf(stderr, "Unknown TokenType\n");
+    exit(1);
+  }
+}
+
+char *nt_to_str(NODE_TYPE type)
+{
+  switch (type)
+  {
+  case EXPR_BINARY:
+    return "Binary";
+  case EXPR_UNARY:
+    return "Unary";
+  case EXPR_GROUP:
+    return "Group";
+  case EXPR_TOKEN:
+    return "Token";
+  case STMT_PRINT:
+    return "Print";
+  case STMT_DECL:
+    return "Statment";
+  case STMT_INT:
+    return "Integer";
+  case STMT_DOUBLE:
+    return "Double";
+  case STMT_STR:
+    return "String";
+  case STMT_BOOL:
+    return "Bool";
+  case STMT_ASS:
+    return "Assignment";
+  case STMT_IFELSE:
+    return "If";  
+  default:
+    fprintf(stderr, "Unknown NodeType\n");
+    exit(1);
+  }
+}
+char *ot_to_str(NODE_TYPE type)
+{
+  switch (type)
+  {
+  case TYPE_INT:
+    return "type int";
+  case TYPE_DOUBLE:
+    return "type double";
+  case TYPE_STR:
+    return "type string";
+  case TYPE_BOOL:
+    return "type bool";
+  default:
+    fprintf(stderr, "Unknown ObjectType\n");
+    exit(1);
+  }
 }

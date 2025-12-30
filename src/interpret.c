@@ -1,7 +1,7 @@
 #include "../include/global.h"
 
 extern size_t line_number;
-extern size_t column_number;
+extern size_t column_number;      
 extern hash_table_t *ht;
 #define HASH_TABLE_SIZE 1024;
 
@@ -14,12 +14,30 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
     switch (expr->binary->token->tkn)
     {
     case TKN_OP_ADD:
-      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE))
+      if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
       {
-        int val = left->data.i + right->data.i;
-        Object *obj = makeObj(left->type);
-        obj->data.i = val;
-        return obj;
+        if (left->type == TYPE_INT && right->type == TYPE_INT)
+        {
+          Object *obj = makeObj(left->type);
+          int val = left->data.i + right->data.i;
+          obj->data.i = val;
+          return obj;
+        }
+        else if (left->type == TYPE_DOUBLE || right->type == TYPE_DOUBLE)
+        {
+          Object *obj = makeObj(TYPE_DOUBLE);
+          double val;
+          if (left->type == TYPE_INT)
+            val = left->data.i;
+          else
+            val = left->data.d;
+          if (right->type == TYPE_INT)
+            val += right->data.i;
+          else
+            val += right->data.d;
+          obj->data.d = val;
+          return obj;
+        }
       }
       else if (left->type == TYPE_STR && right->type == TYPE_INT)
       {
@@ -39,12 +57,30 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
         return obj;
       }
     case TKN_OP_SUB:
-      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE))
+      if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
       {
-        int val = left->data.i - right->data.i;
-        Object *obj = makeObj(left->type);
-        obj->data.i = val;
-        return obj;
+        if (left->type == TYPE_INT && right->type == TYPE_INT)
+        {
+          Object *obj = makeObj(left->type);
+          int val = left->data.i - right->data.i;
+          obj->data.i = val;
+          return obj;
+        }
+        else if (left->type == TYPE_DOUBLE || right->type == TYPE_DOUBLE)
+        {
+          Object *obj = makeObj(TYPE_DOUBLE);
+          double val;
+          if (left->type == TYPE_INT)
+            val = left->data.i;
+          else
+            val = left->data.d;
+          if (right->type == TYPE_INT)
+            val -= right->data.i;
+          else
+            val -= right->data.d;
+          obj->data.d = val;
+          return obj;
+        }
       }
       else if (left->type == TYPE_STR && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
       {
@@ -64,13 +100,31 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
         fprintf(stderr, "DivisionByZeroError: Division by zero is undefined at line: %zu \n", line_number);
         exit(1);
       }
-      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE))
+      if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
       {
-      
-        int val = left->data.d / right->data.d;
-        Object *obj = makeObj(left->type);
-        obj->data.i = val;
-        return obj;
+
+        if (left->type == TYPE_INT && right->type == TYPE_INT)
+        {
+          Object *obj = makeObj(left->type);
+          int val = left->data.d / right->data.d;
+          obj->data.i = val;
+          return obj;
+        }
+        else if (left->type == TYPE_DOUBLE || right->type == TYPE_DOUBLE)
+        {
+          Object *obj = makeObj(TYPE_DOUBLE);
+          double val;
+          if (left->type == TYPE_INT)
+            val = left->data.i;
+          else
+            val = left->data.d;
+          if (right->type == TYPE_INT)
+            val /= right->data.i;
+          else
+            val += right->data.d;
+          obj->data.d = val;
+          return obj;
+        }
       }
       else if (left->type == TYPE_STR && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
       {
@@ -88,32 +142,79 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
         exit(1);
       }
     case TKN_OP_MUL:
-      if ((left->type == TYPE_INT && right->type == TYPE_INT) ||(left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE) )
+      if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
       {
-        int val = left->data.d + right->data.d;
+        if (left->type == TYPE_INT && right->type == TYPE_INT)
+        {
+          Object *obj = makeObj(left->type);
+
+          int val = left->data.d + right->data.d;
+          obj->data.i = val;
+          return obj;
+        }
+        else if (left->type == TYPE_DOUBLE || right->type == TYPE_DOUBLE)
+        {
+          Object *obj = makeObj(TYPE_DOUBLE);
+          double val;
+          if (left->type == TYPE_INT)
+            val = left->data.i;
+          else
+            val = left->data.d;
+          if (right->type == TYPE_INT)
+            val *= right->data.i;
+          else
+            val *= right->data.d;
+          obj->data.d = val;
+          return obj;
+        }
+      }
+      else if ((left->type == TYPE_INT || left->type == TYPE_STR)  && (right->type == TYPE_STR || right->type == TYPE_INT))
+      {
+        Object *obj = makeObj(TYPE_STR);
+        if (left->type == TYPE_STR)
+          obj->data.s =  mul_str(left->data.s, right->data.i);
+        else
+          obj->data.s =  mul_str(right->data.s, left->data.i);
+        return obj;
+    
+      }
+      else
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '*' on types str and str \n");
+        exit(1);
+      }
+    case TKN_OP_MOD:
+      if ((left->type == TYPE_INT) && (right->type == TYPE_INT))
+      {
         Object *obj = makeObj(left->type);
+        int val = left->data.i % right->data.i;
         obj->data.i = val;
         return obj;
       }
+      else if (left->type == TYPE_DOUBLE && right->type == TYPE_DOUBLE)
+      {
+        fprintf(stderr, "TypeError: Unsupported Operand '%%' on types double and dobule");
+        exit(1);
+      }
       else if (left->type == TYPE_STR && (right->type == TYPE_INT || right->type == TYPE_DOUBLE))
       {
-        fprintf(stderr, "TypeError: Unsupported Operand '*' on types str and int");
+        fprintf(stderr, "TypeError: Unsupported Operand '%%' on types str and int");
         exit(1);
       }
       else if ((left->type == TYPE_INT || left->type == TYPE_DOUBLE) && right->type == TYPE_STR)
       {
         // TODO: add mulitplication of strings
 
-        fprintf(stderr, "TypeError: Unsupported Operand '*' on types int and str");
+        fprintf(stderr, "TypeError: Unsupported Operand '%%' on types int and str");
         exit(1);
       }
       else
       {
-        fprintf(stderr, "TypeError: Unsupported Operand '*' on types str and str");
+        fprintf(stderr, "TypeError: Unsupported Operand '%%' on types str and str");
         exit(1);
       }
     default:
-      fprintf(stderr, "SyntaxError: Wrong Operator at line: %zu where: %s\n", line_number, expr->binary->token->s_lexeme);
+      fprintf(stderr, "SyntaxError: Wrong Operator at line: %zu got: %s\n", line_number, expr->binary->token->s_lexeme);
       exit(1);
     }
   }
@@ -125,13 +226,12 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
     case TKN_OP_ADD:
       return val;
     case TKN_OP_SUB:
-      if (val->type == TYPE_INT)
+      if (val->type == TYPE_INT || val->type == TYPE_DOUBLE)
       {
-        val->data.i *= -1;
-      }
-      else if (val->type == TYPE_DOUBLE)
-      {
-        val->data.d *= -1;
+        if (val->type == TYPE_INT)
+          val->data.i *= -1;
+        else
+          val->data.i *= -1;
       }
       else
       {
@@ -139,13 +239,9 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
         exit(1);
       }
     case TKN_OP_DIV:
-      fprintf(stderr, "TypeError: Unsupported Operand '/' on types str\n");
-      exit(1);
     case TKN_OP_MUL:
-      fprintf(stderr, "TypeError: Unsupported Operand '*' on types str\n");
-      exit(1);
     default:
-      fprintf(stderr, "TypeError: Unsupported Operand  on types str\n");
+      fprintf(stderr, "TypeError: Unsupported Operand %s  on types str\n", tt_to_str(expr->binary->token->tkn));
       exit(1);
     }
   }
@@ -160,6 +256,12 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
 
       Object *obj = makeObj(TYPE_INT);
       obj->data.i = expr->token->i_lexeme;
+      return obj;
+    }
+    else if (expr->token->tkn == TKN_DOUBLE)
+    {
+      Object *obj = makeObj(TYPE_DOUBLE);
+      obj->data.d = expr->token->f_lexeme;
       return obj;
     }
     else if (expr->token->tkn == TKN_STRING)
@@ -182,7 +284,7 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
       return value;
     }
   }
-  fprintf(stderr, "Wrong Operator \n");
+  fprintf(stderr, "SyntaxError: Wrong Operator at line: %zu got: %s\n", line_number, tt_to_str(expr->token->tkn));
   exit(1);
 }
 
@@ -191,22 +293,21 @@ void execute(Stmt *stmt)
   if (stmt->type == STMT_PRINT)
   {
     Object *obj = evaluate(ht, stmt->print_stmt->expr);
-    switch(obj->type) {
-      case TYPE_INT:
-        
-        printf("%d\n", obj->data.i);
-        break;
-      case TYPE_DOUBLE:
-        printf("%f\n", obj->data.d);
-        break;
-      case TYPE_STR:
-        printf("%s\n", obj->data.s);
-        break;
-      default:
-        fprintf(stderr, "Error while printing");
-        exit(1);
+    switch (obj->type)
+    {
+    case TYPE_INT:
+      printf("%d\n", obj->data.i);
+      break;
+    case TYPE_DOUBLE:
+      printf("%f\n", obj->data.d);
+      break;
+    case TYPE_STR:
+      printf("%s\n", obj->data.s);
+      break;
+    default:
+      fprintf(stderr, "Error while printing");
+      exit(1);
     }
-    
   }
   else if (stmt->type == STMT_DECL)
   {

@@ -131,92 +131,88 @@ bool_decl
     ;
 
 expr  
-    : INUMBER                             { $$ = numExpr(TKN_INT,     $1); }
-    | DNUMBER                             { $$ = numExpr(TKN_DOUBLE,  $1); }
-    | STRING                              { $$ = strExpr(TKN_STRING,  $1); }       
-    | IDENTIFIER                          { $$ = litExpr(TKN_LITERAL, $1); }       
-    | LEFT_PAREN expr RIGHT_PAREN         { $$ = makeGroupExpr($2);        }
+    : INUMBER                             { $$ = i_expr($1);        }
+    | DNUMBER                             { $$ = d_expr($1);        }
+    | STRING                              { $$ = s_expr($1);        }       
+    | IDENTIFIER                          { $$ = l_expr($1);        }       
+    | LEFT_PAREN expr RIGHT_PAREN         { $$ = makeGroupExpr($2); }
     | expr DIVIDE expr                    
     { 
-        if (($1->token->tkn == TKN_INT && $3->token->tkn == TKN_INT) || ($1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_DOUBLE))
-            $$ = makeBinaryExpr(TKN_OP_DIV, $1, $3);
-        else if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
+        if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ($1->token->tkn == TKN_STRING ? "string" : "int"),
-                ($3->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str($1->token->tkn), 
+                tt_to_str($3->token->tkn),
                   line_number
                   );
-            
+            exit(1);
             }
-        $$ = makeBinaryExpr(TKN_OP_DIV, $1, $3);         
+        $$ = makeBinaryExpr(TKN_OP_DIV, $1, $3);
+        
     }
     | expr MULTIPLY expr                  
     { 
 
-        if (($1->token->tkn == TKN_INT && $3->token->tkn == TKN_INT) || ($1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_DOUBLE))
-            $$ = makeBinaryExpr(TKN_OP_DIV, $1, $3);
-        else if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
+        if (($1->token->tkn == TKN_STRING && $3->token->tkn == TKN_DOUBLE) || ( $1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ($1->token->tkn == TKN_STRING ? "string" : "int"),
-                ($3->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str($1->token->tkn), 
+                tt_to_str($3->token->tkn),
                   line_number
                   );
-            
+            exit(1);
         }
-        $$ = makeBinaryExpr(TKN_OP_MUL, $1, $3);
+         $$ = makeBinaryExpr(TKN_OP_MUL, $1, $3);
+
 
     }
     | expr PLUS expr                      
-    { 
-        if (($1->token->tkn == TKN_INT && $3->token->tkn == TKN_INT) || ($1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_DOUBLE))
-            $$ = makeBinaryExpr(TKN_OP_ADD, $1, $3);
-        else if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
+    {    
+        if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ($1->token->tkn == TKN_STRING ? "string" : "int"),
-                ($3->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str($1->token->tkn), 
+                tt_to_str($3->token->tkn),
                   line_number
                   );
-            
+            exit(1);
         }
         $$ = makeBinaryExpr(TKN_OP_ADD, $1, $3);
 
     }
     | expr SUBTRACT expr                  
     { 
-        if (($1->token->tkn == TKN_INT && $3->token->tkn == TKN_INT) || ($1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_DOUBLE))
+        if (($1->token->tkn == TKN_DOUBLE || $1->token->tkn == TKN_INT) && ($3->token->tkn == TKN_DOUBLE || $3->token->tkn == TKN_INT))
             $$ = makeBinaryExpr(TKN_OP_SUB, $1, $3);
         else if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ($1->token->tkn == TKN_STRING ? "string" : "int"),
-                ($3->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str($1->token->tkn), 
+                tt_to_str($3->token->tkn),
                   line_number
                   );
+                  exit(1);
         }
-        $$ = makeBinaryExpr(TKN_OP_SUB, $1, $3);
     }
     | expr MOD expr                       
     { 
-        if (($1->token->tkn == TKN_INT && $3->token->tkn == TKN_INT) || ($1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_DOUBLE))
+        if ($1->token->tkn == TKN_INT && $3->token->tkn == TKN_INT)
             $$ = makeBinaryExpr(TKN_OP_MOD, $1, $3);
-        else if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
+        else {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ($1->token->tkn == TKN_STRING ? "string" : "int"),
-                ($3->token->tkn == TKN_STRING ? "string" : "int"),
-                  line_number
+                tt_to_str($1->token->tkn), 
+                tt_to_str($3->token->tkn),
+                line_number
                   );
+                  exit(1);
             
         }
-        $$ = makeBinaryExpr(TKN_OP_MOD, $1, $3);
 
     }
     ;

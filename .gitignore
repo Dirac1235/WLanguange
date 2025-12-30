@@ -1,3 +1,4 @@
 interpret
 interpret.dSYM
-TODO
+*.TODO
+test.c

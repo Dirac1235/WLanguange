@@ -36,6 +36,7 @@ typedef enum {
   TYPE_INT,
   TYPE_DOUBLE,
   TYPE_STR,
+  TYPE_BOOL,
 } ObjectType;
 
 typedef struct {

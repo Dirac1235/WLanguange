@@ -469,8 +469,8 @@ static const yytype_uint8 yyrline[] =
 {
        0,    52,    52,    55,    57,    61,    62,    63,    64,    68,
       69,    70,    71,    75,    76,    80,    89,    99,   107,   116,
-     125,   134,   135,   136,   137,   138,   139,   155,   173,   190,
-     205
+     125,   134,   135,   136,   137,   138,   139,   154,   171,   186,
+     201
 };
 #endif
 
@@ -1462,83 +1462,79 @@ yyreduce:
 
   case 21:
 #line 134 "src/parser.y"
-    { (yyval.expr_val) = numExpr(TKN_INT,     (yyvsp[(1) - (1)].i_val)); ;}
+    { (yyval.expr_val) = i_expr((yyvsp[(1) - (1)].i_val));        ;}
     break;
 
   case 22:
 #line 135 "src/parser.y"
-    { (yyval.expr_val) = numExpr(TKN_DOUBLE,  (yyvsp[(1) - (1)].d_val)); ;}
+    { (yyval.expr_val) = d_expr((yyvsp[(1) - (1)].d_val));        ;}
     break;
 
   case 23:
 #line 136 "src/parser.y"
-    { (yyval.expr_val) = strExpr(TKN_STRING,  (yyvsp[(1) - (1)].str_val)); ;}
+    { (yyval.expr_val) = s_expr((yyvsp[(1) - (1)].str_val));        ;}
     break;
 
   case 24:
 #line 137 "src/parser.y"
-    { (yyval.expr_val) = litExpr(TKN_LITERAL, (yyvsp[(1) - (1)].str_val)); ;}
+    { (yyval.expr_val) = l_expr((yyvsp[(1) - (1)].str_val));        ;}
     break;
 
   case 25:
 #line 138 "src/parser.y"
-    { (yyval.expr_val) = makeGroupExpr((yyvsp[(2) - (3)].expr_val));        ;}
+    { (yyval.expr_val) = makeGroupExpr((yyvsp[(2) - (3)].expr_val)); ;}
     break;
 
   case 26:
 #line 140 "src/parser.y"
     { 
-        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_INT && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_INT) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE))
-            (yyval.expr_val) = makeBinaryExpr(TKN_OP_DIV, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && ((yyvsp[(3) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE)) || ( ((yyvsp[(1) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE) && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && ((yyvsp[(3) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE)) || ( ((yyvsp[(1) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE) && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str((yyvsp[(1) - (3)].expr_val)->token->tkn), 
+                tt_to_str((yyvsp[(3) - (3)].expr_val)->token->tkn),
                   line_number
                   );
-            
+            exit(1);
             }
-        (yyval.expr_val) = makeBinaryExpr(TKN_OP_DIV, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));         
+        (yyval.expr_val) = makeBinaryExpr(TKN_OP_DIV, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
+        
     ;}
     break;
 
   case 27:
-#line 156 "src/parser.y"
+#line 155 "src/parser.y"
     { 
 
-        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_INT && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_INT) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE))
-            (yyval.expr_val) = makeBinaryExpr(TKN_OP_DIV, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && ((yyvsp[(3) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE)) || ( ((yyvsp[(1) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE) && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE) || ( (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str((yyvsp[(1) - (3)].expr_val)->token->tkn), 
+                tt_to_str((yyvsp[(3) - (3)].expr_val)->token->tkn),
                   line_number
                   );
-            
+            exit(1);
         }
-        (yyval.expr_val) = makeBinaryExpr(TKN_OP_MUL, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
+         (yyval.expr_val) = makeBinaryExpr(TKN_OP_MUL, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
+
 
     ;}
     break;
 
   case 28:
-#line 174 "src/parser.y"
-    { 
-        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_INT && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_INT) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE))
-            (yyval.expr_val) = makeBinaryExpr(TKN_OP_ADD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && ((yyvsp[(3) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE)) || ( ((yyvsp[(1) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE) && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+#line 172 "src/parser.y"
+    {    
+        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && ((yyvsp[(3) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE)) || ( ((yyvsp[(1) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE) && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str((yyvsp[(1) - (3)].expr_val)->token->tkn), 
+                tt_to_str((yyvsp[(3) - (3)].expr_val)->token->tkn),
                   line_number
                   );
-            
+            exit(1);
         }
         (yyval.expr_val) = makeBinaryExpr(TKN_OP_ADD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
 
@@ -1546,46 +1542,46 @@ yyreduce:
     break;
 
   case 29:
-#line 191 "src/parser.y"
+#line 187 "src/parser.y"
     { 
-        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_INT && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_INT) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE))
+        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_INT) && ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_INT))
             (yyval.expr_val) = makeBinaryExpr(TKN_OP_SUB, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
         else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && ((yyvsp[(3) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE)) || ( ((yyvsp[(1) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE) && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
+                tt_to_str((yyvsp[(1) - (3)].expr_val)->token->tkn), 
+                tt_to_str((yyvsp[(3) - (3)].expr_val)->token->tkn),
                   line_number
                   );
+                  exit(1);
         }
-        (yyval.expr_val) = makeBinaryExpr(TKN_OP_SUB, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
     ;}
     break;
 
   case 30:
-#line 206 "src/parser.y"
+#line 202 "src/parser.y"
     { 
-        if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_INT && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_INT) || ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE))
+        if ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_INT && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_INT)
             (yyval.expr_val) = makeBinaryExpr(TKN_OP_MOD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
-        else if (((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING && ((yyvsp[(3) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_DOUBLE)) || ( ((yyvsp[(1) - (3)].expr_val)->token->tkn ==TKN_INT || (yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_DOUBLE) && (yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING) ) {
+        else {
             fprintf(
             stderr,
                 "incompatible types '%s' and '%s' at line %zu\n",
-                ((yyvsp[(1) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                ((yyvsp[(3) - (3)].expr_val)->token->tkn == TKN_STRING ? "string" : "int"),
-                  line_number
+                tt_to_str((yyvsp[(1) - (3)].expr_val)->token->tkn), 
+                tt_to_str((yyvsp[(3) - (3)].expr_val)->token->tkn),
+                line_number
                   );
+                  exit(1);
             
         }
-        (yyval.expr_val) = makeBinaryExpr(TKN_OP_MOD, (yyvsp[(1) - (3)].expr_val), (yyvsp[(3) - (3)].expr_val));
 
     ;}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1589 "build/parser.tab.c"
+#line 1585 "build/parser.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1799,7 +1795,7 @@ yyreturn:
 }
 
 
-#line 224 "src/parser.y"
+#line 220 "src/parser.y"
 
 
 

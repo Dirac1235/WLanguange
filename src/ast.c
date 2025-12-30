@@ -2,26 +2,24 @@
 
 extern hash_table_t *ht;
 
-Token *numToken(TokenType op, long double lex)
+Token *i_token(int lex)
 // TODO: handle numbers and other characters
 {
   Token *t = (Token *)malloc(sizeof(Token));
-  t->tkn = op;
-  switch (t->tkn)
-  {
-  case TKN_INT:
-    t->i_lexeme = lex;
-    break;
-  case TKN_DOUBLE:
-    t->f_lexeme = lex;
-    break;
-  default:
-    break;
-  }
+  t->tkn = TKN_INT;
+  t->i_lexeme = lex;
+  return t;
+}
+Token *d_token(long double lex)
+// TODO: handle numbers and other characters
+{
+  Token *t = (Token *)malloc(sizeof(Token));
+  t->tkn = TKN_DOUBLE;
+  t->f_lexeme = lex;
   return t;
 }
 
-Token *strToken(TokenType op, char *lex)
+Token *s_token(TokenType op, char *lex)
 // TODO: handle numbers and other characters
 {
   Token *t = (Token *)malloc(sizeof(Token));
@@ -30,32 +28,39 @@ Token *strToken(TokenType op, char *lex)
   return t;
 }
 
-Expr *litExpr(TokenType tkn, char *lit) {
+Expr *l_expr(char *lit)
+{
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
   Token *t = (Token *)malloc(sizeof(Token));
   expr->token = t;
-  expr->token->tkn = tkn;
+  expr->token->tkn = TKN_LITERAL;
   expr->token->literal = strdup(lit);
   return expr;
 }
 
-Expr *strExpr(TokenType op, char *lex)
+Expr *s_expr(char *lex)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
-  expr->token = strToken(op, lex);
+  expr->token = s_token(TKN_STRING, lex);
   return expr;
 }
 
-Expr *numExpr(TokenType op, long double lex)
+Expr *i_expr(int lex)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
-  expr->token = numToken(op, lex);
+  expr->token = i_token(lex);
   return expr;
 }
-
+Expr *d_expr(long double lex)
+{
+  Expr *expr = (Expr *)malloc(sizeof(Expr));
+  expr->type = EXPR_TOKEN;
+  expr->token = d_token(lex);
+  return expr;
+}
 Expr *makeUnaryExpr(TokenType op, Expr *right)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
@@ -63,7 +68,7 @@ Expr *makeUnaryExpr(TokenType op, Expr *right)
 
   Unary *u = (Unary *)malloc(sizeof(Unary));
 
-  u->token = strToken(op, find_op(op));
+  u->token = s_token(op, find_op(op));
   u->expr = right;
 
   expr->unary = u;
@@ -76,7 +81,7 @@ Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right)
   expr->type = EXPR_BINARY;
 
   Binary *b = (Binary *)malloc(sizeof(Binary));
-  b->token = strToken(op, find_op(op));
+  b->token = s_token(op, find_op(op));
   b->left = left;
   b->right = right;
 
@@ -98,7 +103,7 @@ Expr *makeGroupExpr(Expr *inner)
 
 Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl)
 {
-  
+
   Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
   stmt->type = STMT_DECL;
   DeclStmt *dst = (DeclStmt *)malloc(sizeof(DeclStmt));

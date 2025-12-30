@@ -82,11 +82,14 @@ size_t line_number;
 size_t column_number;
 hash_table_t *ht;
 
-Token *numToken(TokenType op, long double lex);
-Token *strToken(TokenType op, char *lex);
-Expr *strExpr(TokenType op, char *lex);
-Expr *numExpr(TokenType op, long double lex);
-Expr *litExpr(TokenType tkn, char *lit);
+Token *i_token(int lex);
+Token *d_token(long double lex);
+Token *s_token(TokenType op, char *lex);
+
+Expr *s_expr(char *lex);
+Expr *i_expr(int lex);
+Expr *d_expr(long double lex);
+Expr *l_expr( char *lit);
 
 Expr *makeUnaryExpr(TokenType op, Expr *right);
 Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right);
@@ -95,10 +98,8 @@ Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
 Stmt *makePrintStmt(Expr *expr);
 Stmt *makeAssStmt(char *identifier, Expr *decl);
 
-
 void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(Stmt **stmt_lst, size_t count);
 Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count);
-
 
 #endif
