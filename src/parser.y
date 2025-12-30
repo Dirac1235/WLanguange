@@ -60,6 +60,8 @@ program
 line
     : declaration NEWLINE
     | stmt NEWLINE
+    | declaration
+    | stmt
     ;
 
 declaration

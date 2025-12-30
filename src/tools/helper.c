@@ -69,7 +69,7 @@ Object *makeObj(ObjectType type)
 
 char *concat(char *left, char *right) {
   size_t t_len = strlen(left) + strlen(right);
-  char *hold = malloc(sizeof(char) * t_len);
-  snprintf(hold, t_len, "%s%s", left, right);
+  char *hold = malloc(sizeof(char) * (t_len + 1));
+  snprintf(hold, t_len + 1, "%s%s", left, right);
   return hold;
 }

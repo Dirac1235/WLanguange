@@ -171,7 +171,6 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
 
     else if (expr->token->tkn == TKN_LITERAL)
     {
-      hash_table_print(ht);
       Object *value = hash_table_get(ht, expr->token->literal);
       if (!value)
       {

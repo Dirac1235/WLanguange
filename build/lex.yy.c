@@ -802,65 +802,68 @@ case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
 #line 22 "src/lex.l"
-yylval.str_val=strdup(yytext);         column_number += yyleng; return STRING;
+{
+                                    yylval.str_val=strndup(yytext + 1, strlen(yytext) - 2);         
+                                    column_number += yyleng; return STRING;
+                                  }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 25 "src/lex.l"
+#line 28 "src/lex.l"
 column_number++; return PLUS;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 26 "src/lex.l"
+#line 29 "src/lex.l"
 column_number++; return MOD;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 27 "src/lex.l"
+#line 30 "src/lex.l"
 column_number++; return SUBTRACT;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 28 "src/lex.l"
+#line 31 "src/lex.l"
 column_number++; return MULTIPLY;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 29 "src/lex.l"
+#line 32 "src/lex.l"
 column_number++; return DIVIDE;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 30 "src/lex.l"
+#line 33 "src/lex.l"
 column_number++; return LEFT_PAREN;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 31 "src/lex.l"
+#line 34 "src/lex.l"
 column_number++; return RIGHT_PAREN;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 32 "src/lex.l"
+#line 35 "src/lex.l"
 column_number++; return EQUAL;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 34 "src/lex.l"
+#line 37 "src/lex.l"
 ; /* ignore whitespace */
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 35 "src/lex.l"
+#line 38 "src/lex.l"
 line_number++; column_number = 0; return NEWLINE;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 37 "src/lex.l"
+#line 40 "src/lex.l"
 ECHO;
 	YY_BREAK
-#line 863 "build/lex.yy.c"
+#line 866 "build/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1865,7 +1868,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 37 "src/lex.l"
+#line 40 "src/lex.l"
 
 
 

@@ -19,7 +19,10 @@
 [0-9]+                            yylval.i_val=atoi(yytext);             column_number += yyleng; return INUMBER;
 [0-9]+\.[0-9]+                    yylval.d_val=strtod(yytext, NULL);    column_number += yyleng; return DNUMBER;
 [a-zA-Z_][a-zA-Z0-9_]*            yylval.str_val=strdup(yytext);         column_number += yyleng; return IDENTIFIER;
-"\""([^"\\]|\\.)*"\""             yylval.str_val=strdup(yytext);         column_number += yyleng; return STRING;
+"\""([^"\\]|\\.)*"\""             {
+                                    yylval.str_val=strndup(yytext + 1, strlen(yytext) - 2);         
+                                    column_number += yyleng; return STRING;
+                                  }
 
 
 "\+"                              column_number++; return PLUS;
