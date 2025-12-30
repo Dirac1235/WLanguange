@@ -21,22 +21,24 @@ void yyerror(char *s) {
     struct Stmt *stmt_val;
     char* str_val;
     int i_val;
+    int b_val;
     double d_val;
 }
 
 
 %token  INT DOUBLE
 %token  STR BOOL EQUAL NUM 
+%token <b_val> BTRUE BFALSE
 
 
 %token <i_val> INUMBER
 %token <d_val> DNUMBER
 %token <str_val> STRING IDENTIFIER
 
-%token NEWLINE
-%token PLUS SUBTRACT MULTIPLY DIVIDE MOD
+%token PLUS SUBTRACT MULTIPLY DIVIDE MOD BANG 
+%token BANGEQUAL EQUALEQUAL GREATER LESS GREATEREQUAL LESSEQUAL 
 %token PRINT
-%token LEFT_PAREN RIGHT_PAREN
+%token LEFT_PAREN RIGHT_PAREN NEWLINE
 
 %start start
 
@@ -122,7 +124,7 @@ str_decl
     ;
 
 bool_decl
-    : BOOL IDENTIFIER EQUAL expr       
+    : BOOL IDENTIFIER EQUAL expr     
     {
         Stmt *bool_d = makeDeclStmt(STMT_BOOL, $2, $4);
         stmt_root = addStmt(stmt_root, stmt_root_count);
@@ -133,15 +135,26 @@ bool_decl
 expr  
     : INUMBER                             { $$ = i_expr($1);        }
     | DNUMBER                             { $$ = d_expr($1);        }
+    | BFALSE                              { $$ = b_expr($1);        }
+    | BTRUE                               { $$ = b_expr($1);        }
     | STRING                              { $$ = s_expr($1);        }       
     | IDENTIFIER                          { $$ = l_expr($1);        }       
     | LEFT_PAREN expr RIGHT_PAREN         { $$ = makeGroupExpr($2); }
+    | SUBTRACT expr
+    {
+        $$ = makeUnaryExpr(TKN_OP_SUB, $2);
+    } 
+    | BANG expr
+    {
+        $$ = makeUnaryExpr(TKN_OP_BANG, $2);
+
+    }           
     | expr DIVIDE expr                    
     { 
         if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
-                "incompatible types '%s' and '%s' at line %zu\n",
+                "Unsupported Operation '/' on types '%s' and '%s' at line %zu\n",
                 tt_to_str($1->token->tkn), 
                 tt_to_str($3->token->tkn),
                   line_number
@@ -153,15 +166,14 @@ expr
     }
     | expr MULTIPLY expr                  
     { 
-
         if (($1->token->tkn == TKN_STRING && $3->token->tkn == TKN_DOUBLE) || ( $1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
-                "incompatible types '%s' and '%s' at line %zu\n",
+                "Unsupported Operation '*' on types '%s' and '%s' at line %zu\n",
                 tt_to_str($1->token->tkn), 
                 tt_to_str($3->token->tkn),
                   line_number
-                  );
+            );
             exit(1);
         }
          $$ = makeBinaryExpr(TKN_OP_MUL, $1, $3);
@@ -173,11 +185,11 @@ expr
         if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
-                "incompatible types '%s' and '%s' at line %zu\n",
+                "Unsupported Operation '+' on types '%s' and '%s' at line %zu\n",
                 tt_to_str($1->token->tkn), 
                 tt_to_str($3->token->tkn),
                   line_number
-                  );
+            );
             exit(1);
         }
         $$ = makeBinaryExpr(TKN_OP_ADD, $1, $3);
@@ -185,18 +197,18 @@ expr
     }
     | expr SUBTRACT expr                  
     { 
-        if (($1->token->tkn == TKN_DOUBLE || $1->token->tkn == TKN_INT) && ($3->token->tkn == TKN_DOUBLE || $3->token->tkn == TKN_INT))
-            $$ = makeBinaryExpr(TKN_OP_SUB, $1, $3);
-        else if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
+        if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
             fprintf(
             stderr,
-                "incompatible types '%s' and '%s' at line %zu\n",
+                "Unsupported Operation '-' on types '%s' and '%s' at line %zu\n",
                 tt_to_str($1->token->tkn), 
                 tt_to_str($3->token->tkn),
                   line_number
-                  );
-                  exit(1);
+            );
+            exit(1);
         }
+        $$ = makeBinaryExpr(TKN_OP_SUB, $1, $3);
+
     }
     | expr MOD expr                       
     { 
@@ -205,15 +217,36 @@ expr
         else {
             fprintf(
             stderr,
-                "incompatible types '%s' and '%s' at line %zu\n",
+                "Unsupported Operation '+' on types '%s' and '%s' at line %zu\n",
                 tt_to_str($1->token->tkn), 
                 tt_to_str($3->token->tkn),
                 line_number
-                  );
-                  exit(1);
+            );
+            exit(1);
             
         }
 
+    }
+    | expr BANGEQUAL expr
+    {       
+        $$ = makeBinaryExpr(TKN_OP_BANGEQUAL, $1, $3);
+    }
+    | expr EQUALEQUAL expr
+    { 
+        $$ = makeBinaryExpr(TKN_OP_EQUALEQUAL, $1, $3);
+    }
+    | expr GREATEREQUAL expr
+    { 
+        $$ = makeBinaryExpr(TKN_OP_GREATEREQUAL, $1, $3);
+    }| expr LESSEQUAL expr
+    { 
+        $$ = makeBinaryExpr(TKN_OP_LESSEQUAL, $1, $3);
+    }| expr LESS expr
+    { 
+        $$ = makeBinaryExpr(TKN_OP_LESS, $1, $3);
+    }| expr GREATER expr
+    { 
+        $$ = makeBinaryExpr(TKN_OP_GREATER, $1, $3);
     }
     ;
 

@@ -45,19 +45,28 @@
      BOOL = 261,
      EQUAL = 262,
      NUM = 263,
-     INUMBER = 264,
-     DNUMBER = 265,
-     STRING = 266,
-     IDENTIFIER = 267,
-     NEWLINE = 268,
-     PLUS = 269,
-     SUBTRACT = 270,
-     MULTIPLY = 271,
-     DIVIDE = 272,
-     MOD = 273,
-     PRINT = 274,
-     LEFT_PAREN = 275,
-     RIGHT_PAREN = 276
+     BTRUE = 264,
+     BFALSE = 265,
+     INUMBER = 266,
+     DNUMBER = 267,
+     STRING = 268,
+     IDENTIFIER = 269,
+     PLUS = 270,
+     SUBTRACT = 271,
+     MULTIPLY = 272,
+     DIVIDE = 273,
+     MOD = 274,
+     BANG = 275,
+     BANGEQUAL = 276,
+     EQUALEQUAL = 277,
+     GREATER = 278,
+     LESS = 279,
+     GREATEREQUAL = 280,
+     LESSEQUAL = 281,
+     PRINT = 282,
+     LEFT_PAREN = 283,
+     RIGHT_PAREN = 284,
+     NEWLINE = 285
    };
 #endif
 /* Tokens.  */
@@ -67,19 +76,28 @@
 #define BOOL 261
 #define EQUAL 262
 #define NUM 263
-#define INUMBER 264
-#define DNUMBER 265
-#define STRING 266
-#define IDENTIFIER 267
-#define NEWLINE 268
-#define PLUS 269
-#define SUBTRACT 270
-#define MULTIPLY 271
-#define DIVIDE 272
-#define MOD 273
-#define PRINT 274
-#define LEFT_PAREN 275
-#define RIGHT_PAREN 276
+#define BTRUE 264
+#define BFALSE 265
+#define INUMBER 266
+#define DNUMBER 267
+#define STRING 268
+#define IDENTIFIER 269
+#define PLUS 270
+#define SUBTRACT 271
+#define MULTIPLY 272
+#define DIVIDE 273
+#define MOD 274
+#define BANG 275
+#define BANGEQUAL 276
+#define EQUALEQUAL 277
+#define GREATER 278
+#define LESS 279
+#define GREATEREQUAL 280
+#define LESSEQUAL 281
+#define PRINT 282
+#define LEFT_PAREN 283
+#define RIGHT_PAREN 284
+#define NEWLINE 285
 
 
 
@@ -92,10 +110,11 @@ typedef union YYSTYPE
     struct Stmt *stmt_val;
     char* str_val;
     int i_val;
+    int b_val;
     double d_val;
 }
 /* Line 1529 of yacc.c.  */
-#line 99 "build/parser.tab.h"
+#line 118 "build/parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

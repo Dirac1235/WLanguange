@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syslimits.h>
+#include <stdbool.h>
 
 #include "token.h"
 #include "hash_table.h"

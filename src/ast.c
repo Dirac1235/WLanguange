@@ -10,6 +10,25 @@ Token *i_token(int lex)
   t->i_lexeme = lex;
   return t;
 }
+
+Token *b_token(int lex)
+// TODO: handle numbers and other characters
+{
+  Token *t = (Token *)malloc(sizeof(Token));
+  if (lex)
+  {
+    t->b_lexeme = true;
+    t->tkn = TKN_OP_TRUE;
+  }
+  else
+  {
+    t->b_lexeme = false;
+    t->tkn = TKN_OP_FALSE;
+  };
+
+  return t;
+}
+
 Token *d_token(long double lex)
 // TODO: handle numbers and other characters
 {
@@ -54,6 +73,15 @@ Expr *i_expr(int lex)
   expr->token = i_token(lex);
   return expr;
 }
+
+Expr *b_expr(int lex)
+{
+  Expr *expr = (Expr *)malloc(sizeof(Expr));
+  expr->type = EXPR_TOKEN;
+  expr->token = b_token(lex);
+  return expr;
+}
+
 Expr *d_expr(long double lex)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
@@ -105,10 +133,9 @@ Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl)
 {
 
   Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
-  stmt->type = STMT_DECL;
+  stmt->type = type;
   DeclStmt *dst = (DeclStmt *)malloc(sizeof(DeclStmt));
   stmt->decl_stmt = dst;
-  stmt->decl_stmt->type = type;
   stmt->decl_stmt->expr = decl;
   stmt->decl_stmt->identifier = identifier;
   return stmt;
@@ -159,6 +186,12 @@ char *find_op(TokenType type)
     return "/";
   case TKN_OP_MUL:
     return "*";
+  case TKN_OP_BANGEQUAL:
+    return "!=";
+  case TKN_OP_EQUALEQUAL:
+    return "==";
+  case TKN_OP_BANG:
+    return "!";
   default:
     fprintf(stderr, "wrong token");
     return "";

@@ -1,6 +1,8 @@
 #ifndef TOKEN_H_
 #define TOKEN_H_
 
+#include <stdbool.h>
+
 typedef enum
 {
   TKN_LITERAL,
@@ -8,12 +10,24 @@ typedef enum
   TKN_NUMBER,
   TKN_INT,
   TKN_DOUBLE,
+
   TKN_OP_ADD,
   TKN_OP_SUB,
   TKN_OP_MUL,
   TKN_OP_DIV,
-  TKN_OP_MOD
-   
+  TKN_OP_MOD,
+  TKN_OP_BANG,
+
+  TKN_OP_TRUE,
+  TKN_OP_FALSE,
+
+  TKN_OP_BANGEQUAL,
+  TKN_OP_EQUALEQUAL,
+  TKN_OP_GREATEREQUAL,
+  TKN_OP_LESSEQUAL,
+  TKN_OP_LESS,
+  TKN_OP_GREATER,
+
 } TokenType;
 
 typedef enum
@@ -45,6 +59,7 @@ typedef struct {
         int i;
         double d;
         char *s;
+        bool b;
     } data;
 } Object;
 

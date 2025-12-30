@@ -11,24 +11,13 @@
 
 typedef struct Expr Expr;
 
-typedef struct
-{
-  NODE_TYPE type;
-  char *identifier;
-  Expr *expr;
-} DeclStmt;
-
-typedef struct
-{
-  Expr *expr;
-} PrintStmt;
-
 typedef struct Token
 {
   TokenType tkn;
   int i_lexeme;
   double f_lexeme;
   char *s_lexeme;
+  bool b_lexeme;
   char *literal;
 } Token;
 
@@ -67,6 +56,17 @@ typedef struct Expr
 
 typedef struct
 {
+  Expr *expr;
+} PrintStmt;
+
+typedef struct
+{
+  char *identifier;
+  Expr *expr;
+} DeclStmt;
+
+typedef struct
+{
   NODE_TYPE type;
   union
   {
@@ -83,6 +83,7 @@ size_t column_number;
 hash_table_t *ht;
 
 Token *i_token(int lex);
+Token *b_token(int lex);
 Token *d_token(long double lex);
 Token *s_token(TokenType op, char *lex);
 
@@ -90,6 +91,7 @@ Expr *s_expr(char *lex);
 Expr *i_expr(int lex);
 Expr *d_expr(long double lex);
 Expr *l_expr( char *lit);
+Expr *b_expr(int lex);
 
 Expr *makeUnaryExpr(TokenType op, Expr *right);
 Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right);
@@ -101,5 +103,8 @@ Stmt *makeAssStmt(char *identifier, Expr *decl);
 void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(Stmt **stmt_lst, size_t count);
 Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count);
+
+
+
 
 #endif

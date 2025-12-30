@@ -1,5 +1,12 @@
 #include "../../include/global.h"
 
+/**
+ * input_accept - accepts input from the command line
+ * @intc: length of the arguments
+ * @argv: arguments
+ *
+ * RETURN: File
+ */
 FILE *input_accept(int argc, char **argv)
 {
   char *file_path;
@@ -59,6 +66,12 @@ FILE *input_accept(int argc, char **argv)
   return fp;
 }
 
+/**
+ * makeObj - initializes object type with type
+ * @type: type of the object
+ *
+ * RETURN: Object with initalized type
+ */
 Object *makeObj(ObjectType type)
 {
   Object *obj = (Object *)malloc(sizeof(Object));
@@ -66,6 +79,13 @@ Object *makeObj(ObjectType type)
   return obj;
 }
 
+/**
+ * concat - concatenates two strings together
+ * @left: the left character to be concatenated
+ * @right: the right character to be concatenated
+ *
+ * RETURN:concatenated String
+ */
 char *concat(char *left, char *right)
 {
   size_t t_len = strlen(left) + strlen(right);
@@ -73,14 +93,69 @@ char *concat(char *left, char *right)
   snprintf(hold, t_len + 1, "%s%s", left, right);
   return hold;
 }
-char *mul_str(char *s, int val) {
+
+/**
+ * mul_str - multiplies string with integer
+ * @s: string to be multiplied
+ * @val: the mulitplier
+ *
+ * RETURN: multiplied string
+ */
+char *mul_str(char *s, int val)
+{
   char *res = "";
-  while (val > 0) {
+  while (val > 0)
+  {
     res = concat(res, s);
     val--;
   }
   return res;
 }
+
+Object *isTrue(Object *obj)
+{
+  Object *bobj = makeObj(TYPE_BOOL);
+  bool val = false;
+  if (obj->type == TYPE_INT)
+  {
+    if (obj->data.i != 0)
+      val = true;
+    else
+      val = false;
+  }
+  else if (obj->type == TYPE_DOUBLE)
+  {
+    if (obj->data.d != 0)
+      val = true;
+    else
+      val = false;
+  }
+  else if (obj->type == TYPE_STR)
+  {
+    if (strcmp(obj->data.s, "") != 0)
+      val = true;
+    else
+      val = false;
+  }
+  bobj->data.b = val;
+  return bobj;
+}
+
+bool is_number(Object *o)
+{
+  return o->type == TYPE_INT || o->type == TYPE_DOUBLE;
+}
+bool is_str(Object *o)
+{
+  return o->type == TYPE_STR;
+}
+
+/**
+ * tt_to_str - change TokenType to string
+ * @type: Token Type
+ *
+ * Return: type name
+ */
 
 char *tt_to_str(TokenType type)
 {
@@ -137,13 +212,13 @@ char *nt_to_str(NODE_TYPE type)
   case STMT_ASS:
     return "Assignment";
   case STMT_IFELSE:
-    return "If";  
+    return "If";
   default:
     fprintf(stderr, "Unknown NodeType\n");
     exit(1);
   }
 }
-char *ot_to_str(NODE_TYPE type)
+char *ot_to_str(ObjectType type)
 {
   switch (type)
   {
