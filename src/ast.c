@@ -95,8 +95,8 @@ Expr *makeUnaryExpr(TokenType op, Expr *right)
   expr->type = EXPR_UNARY;
 
   Unary *u = (Unary *)malloc(sizeof(Unary));
-
-  u->token = s_token(op, find_op(op));
+  
+  u->token = s_token(op, tt_to_str(op));
   u->expr = right;
 
   expr->unary = u;
@@ -109,7 +109,7 @@ Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right)
   expr->type = EXPR_BINARY;
 
   Binary *b = (Binary *)malloc(sizeof(Binary));
-  b->token = s_token(op, find_op(op));
+  b->token = s_token(op, tt_to_str(op));
   b->left = left;
   b->right = right;
 
@@ -172,28 +172,4 @@ Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count)
     exit(1);
   }
   return tmp;
-}
-
-char *find_op(TokenType type)
-{
-  switch (type)
-  {
-  case TKN_OP_ADD:
-    return "+";
-  case TKN_OP_SUB:
-    return "-";
-  case TKN_OP_DIV:
-    return "/";
-  case TKN_OP_MUL:
-    return "*";
-  case TKN_OP_BANGEQUAL:
-    return "!=";
-  case TKN_OP_EQUALEQUAL:
-    return "==";
-  case TKN_OP_BANG:
-    return "!";
-  default:
-    fprintf(stderr, "wrong token");
-    return "";
-  }
 }

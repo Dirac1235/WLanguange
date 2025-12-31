@@ -179,6 +179,25 @@ char *tt_to_str(TokenType type)
     return "/";
   case TKN_OP_MOD:
     return "%%";
+   
+  case TKN_OP_TRUE:
+    return "true";
+  case TKN_OP_FALSE:
+    return "false";
+
+  case TKN_OP_BANGEQUAL:
+    return "!=";
+  case TKN_OP_EQUALEQUAL:
+    return "==";
+  case TKN_OP_GREATEREQUAL:
+    return ">=";
+  case TKN_OP_LESSEQUAL:
+    return "<=";
+  case TKN_OP_LESS:
+    return "<";
+  case TKN_OP_GREATER:
+    return ">";
+  
   default:
     fprintf(stderr, "Unknown TokenType\n");
     exit(1);

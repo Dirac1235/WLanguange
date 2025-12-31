@@ -144,9 +144,9 @@ expr
     {
         $$ = makeUnaryExpr(TKN_OP_SUB, $2);
     } 
-    | BANG expr
+    | PLUS expr
     {
-        $$ = makeUnaryExpr(TKN_OP_BANG, $2);
+        $$ = makeUnaryExpr(TKN_OP_ADD, $2);
 
     }           
     | expr DIVIDE expr                    

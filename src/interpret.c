@@ -372,27 +372,24 @@ Object *evaluate(hash_table_t *ht, Expr *expr)
   else if (expr->type == EXPR_UNARY)
   {
     Object *val = evaluate(ht, expr->unary->expr);
-    switch (expr->binary->token->tkn)
+    switch (expr->unary->token->tkn)
     {
     case TKN_OP_ADD:
       return val;
     case TKN_OP_SUB:
-      if (val->type == TYPE_INT || val->type == TYPE_DOUBLE)
+      if (is_number(val))
       {
         if (val->type == TYPE_INT)
           val->data.i *= -1;
         else
-          val->data.i *= -1;
+          val->data.d *= -1;
+        return val;
       }
-      else
-      {
-        fprintf(stderr, "TypeError: Unsupported Operand '-' on types str");
-        exit(1);
-      }
+   
     case TKN_OP_DIV:
     case TKN_OP_MUL:
     default:
-      fprintf(stderr, "TypeError: Unsupported Operand %s  on types str\n", tt_to_str(expr->binary->token->tkn));
+      fprintf(stderr, "TypeError: Unsupported Operand %s  on  %s\n", tt_to_str(expr->binary->token->tkn), ot_to_str(val->type));
       exit(1);
     }
   }

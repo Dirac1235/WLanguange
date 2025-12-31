@@ -1,13 +1,13 @@
 #ifndef AST_H_
 #define AST_H_
 
-#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syslimits.h>
 #include "token.h"
 #include "hash_table.h"
+#include "helper.h"
 
 typedef struct Expr Expr;
 
@@ -75,7 +75,6 @@ typedef struct
   };
 } Stmt;
 
-char *find_op(TokenType type);
 Stmt **stmt_root;
 size_t stmt_root_count;
 size_t line_number;
