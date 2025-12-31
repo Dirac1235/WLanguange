@@ -112,7 +112,7 @@ char *mul_str(char *s, int val)
   return res;
 }
 
-Object *isTrue(Object *obj)
+Object *is_true(Object *obj)
 {
   Object *bobj = makeObj(TYPE_BOOL);
   bool val = false;
@@ -137,6 +137,13 @@ Object *isTrue(Object *obj)
     else
       val = false;
   }
+  else if (obj->type == TYPE_BOOL)
+  {
+    if (obj->data.b == true)
+      val = true;
+    else
+      val = false;
+  }
   bobj->data.b = val;
   return bobj;
 }
@@ -154,7 +161,7 @@ bool is_str(Object *o)
  * tt_to_str - change TokenType to string
  * @type: Token Type
  *
- * Return: type name
+ * RETURN: type name
  */
 
 char *tt_to_str(TokenType type)
@@ -179,7 +186,7 @@ char *tt_to_str(TokenType type)
     return "/";
   case TKN_OP_MOD:
     return "%%";
-   
+
   case TKN_OP_TRUE:
     return "true";
   case TKN_OP_FALSE:
@@ -197,7 +204,11 @@ char *tt_to_str(TokenType type)
     return "<";
   case TKN_OP_GREATER:
     return ">";
-  
+  case TKN_OP_OR:
+    return "or";
+  case TKN_OP_AND:
+    return "and";
+
   default:
     fprintf(stderr, "Unknown TokenType\n");
     exit(1);

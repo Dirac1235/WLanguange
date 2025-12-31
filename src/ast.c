@@ -3,7 +3,6 @@
 extern hash_table_t *ht;
 
 Token *i_token(int lex)
-// TODO: handle numbers and other characters
 {
   Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = TKN_INT;
@@ -12,7 +11,6 @@ Token *i_token(int lex)
 }
 
 Token *b_token(int lex)
-// TODO: handle numbers and other characters
 {
   Token *t = (Token *)malloc(sizeof(Token));
   if (lex)
@@ -30,7 +28,6 @@ Token *b_token(int lex)
 }
 
 Token *d_token(long double lex)
-// TODO: handle numbers and other characters
 {
   Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = TKN_DOUBLE;
@@ -39,13 +36,14 @@ Token *d_token(long double lex)
 }
 
 Token *s_token(TokenType op, char *lex)
-// TODO: handle numbers and other characters
 {
   Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = op;
   t->s_lexeme = strdup(lex);
   return t;
 }
+
+// Expressions 
 
 Expr *l_expr(char *lit)
 {
@@ -89,6 +87,7 @@ Expr *d_expr(long double lex)
   expr->token = d_token(lex);
   return expr;
 }
+
 Expr *makeUnaryExpr(TokenType op, Expr *right)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
@@ -117,6 +116,20 @@ Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right)
   return expr;
 }
 
+Expr *makeLogicalExpr(TokenType op, Expr *left, Expr *right) {
+  Expr *expr = (Expr *)malloc(sizeof(Expr));
+  expr->type = EXPR_LOGICAL;
+
+  Logical *b = (Logical *)malloc(sizeof(Logical));
+  b->token = s_token(op, tt_to_str(op));
+  b->left = left;
+  b->right = right;
+
+  expr->logical = b;
+  return expr;
+}
+
+
 Expr *makeGroupExpr(Expr *inner)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
@@ -128,6 +141,8 @@ Expr *makeGroupExpr(Expr *inner)
   expr->group = g;
   return expr;
 }
+
+// Statements
 
 Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl)
 {

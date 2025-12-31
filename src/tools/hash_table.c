@@ -4,7 +4,7 @@
  * hash_table_create - it creates hash table
  * @size: the size of the hash table
  *
- * Return: hash table with the given size
+ * RETURN: hash table with the given size
  */
 hash_table_t *hash_table_create(unsigned long int size)
 {
@@ -33,7 +33,7 @@ hash_table_t *hash_table_create(unsigned long int size)
  * @key: the data to be translated to index by the hash function
  * @value: is the data that is ascociated with the key
  *
- * Return: 1 if success 0 if not
+ * RETURN: 1 if success 0 if not
  */
 int hash_table_set(hash_table_t *ht, const char *key, Object *value)
 {
@@ -70,7 +70,7 @@ int hash_table_set(hash_table_t *ht, const char *key, Object *value)
  * @key: pointer to key.
  * @value: pointer to value of the key.
  *
- * Return: pointer to new_node node else NULL.
+ * RETURN: pointer to new_node node else NULL.
  */
 hash_node_t *c_node(const char *key, Object *value)
 {
@@ -110,7 +110,7 @@ hash_node_t *c_node(const char *key, Object *value)
  * @ht: hash table which we retrieve the value from
  * @key: the key which we find the value
  *
- * Return: NULL if ke not found else value associated with the key
+ * RETURN: NULL if ke not found else value associated with the key
  */
 Object *hash_table_get(const hash_table_t *ht, const char *key)
 {
@@ -200,8 +200,8 @@ char *format_obj(Object *obj)
 				obj->data.s);
 		break;
 	default:
-			fprintf(stderr, "Unknown type");
-			exit(1);
+		fprintf(stderr, "Unknown type");
+		exit(1);
 	}
 
 	return hold;

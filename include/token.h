@@ -21,6 +21,9 @@ typedef enum
   TKN_OP_TRUE,
   TKN_OP_FALSE,
 
+  TKN_OP_OR,
+  TKN_OP_AND,
+
   TKN_OP_BANGEQUAL,
   TKN_OP_EQUALEQUAL,
   TKN_OP_GREATEREQUAL,
@@ -33,10 +36,12 @@ typedef enum
 typedef enum
 {
   EXPR_BINARY,
+  EXPR_LOGICAL,
   EXPR_UNARY,
   EXPR_GROUP,
   EXPR_TOKEN,
   STMT_PRINT,
+
   STMT_DECL,
   STMT_INT,
   STMT_DOUBLE,

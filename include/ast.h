@@ -23,15 +23,20 @@ typedef struct Token
 
 typedef struct Binary
 {
-  NODE_TYPE type;
   Token *token;
   Expr *left;
   Expr *right;
 } Binary;
 
+typedef struct Logical
+{
+  Token *token;
+  Expr *left;
+  Expr *right;
+} Logical;
+
 typedef struct Unary
 {
-  NODE_TYPE type;
   Token *token;
   Expr *expr;
 } Unary;
@@ -48,6 +53,7 @@ typedef struct Expr
   union
   {
     Binary *binary;
+    Logical *logical;
     Unary *unary;
     Group *group;
     Token *token;
@@ -94,6 +100,7 @@ Expr *b_expr(int lex);
 
 Expr *makeUnaryExpr(TokenType op, Expr *right);
 Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right);
+Expr *makeLogicalExpr(TokenType op, Expr *left, Expr *right);
 Expr *makeGroupExpr(Expr *inner);
 Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
 Stmt *makePrintStmt(Expr *expr);
@@ -103,7 +110,8 @@ void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(Stmt **stmt_lst, size_t count);
 Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count);
 
-
+Object *evaluate( Expr *expr);
+void execute(Stmt *stmt);
 
 
 #endif

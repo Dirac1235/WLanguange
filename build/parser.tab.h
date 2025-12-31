@@ -63,10 +63,12 @@
      LESS = 279,
      GREATEREQUAL = 280,
      LESSEQUAL = 281,
-     PRINT = 282,
-     LEFT_PAREN = 283,
-     RIGHT_PAREN = 284,
-     NEWLINE = 285
+     AND = 282,
+     OR = 283,
+     PRINT = 284,
+     LEFT_PAREN = 285,
+     RIGHT_PAREN = 286,
+     NEWLINE = 287
    };
 #endif
 /* Tokens.  */
@@ -94,10 +96,12 @@
 #define LESS 279
 #define GREATEREQUAL 280
 #define LESSEQUAL 281
-#define PRINT 282
-#define LEFT_PAREN 283
-#define RIGHT_PAREN 284
-#define NEWLINE 285
+#define AND 282
+#define OR 283
+#define PRINT 284
+#define LEFT_PAREN 285
+#define RIGHT_PAREN 286
+#define NEWLINE 287
 
 
 
@@ -114,7 +118,7 @@ typedef union YYSTYPE
     double d_val;
 }
 /* Line 1529 of yacc.c.  */
-#line 118 "build/parser.tab.h"
+#line 122 "build/parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

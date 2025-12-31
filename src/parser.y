@@ -37,6 +37,7 @@ void yyerror(char *s) {
 
 %token PLUS SUBTRACT MULTIPLY DIVIDE MOD BANG 
 %token BANGEQUAL EQUALEQUAL GREATER LESS GREATEREQUAL LESSEQUAL 
+%token AND OR
 %token PRINT
 %token LEFT_PAREN RIGHT_PAREN NEWLINE
 
@@ -238,15 +239,26 @@ expr
     | expr GREATEREQUAL expr
     { 
         $$ = makeBinaryExpr(TKN_OP_GREATEREQUAL, $1, $3);
-    }| expr LESSEQUAL expr
+    }
+    | expr LESSEQUAL expr
     { 
         $$ = makeBinaryExpr(TKN_OP_LESSEQUAL, $1, $3);
-    }| expr LESS expr
+    }
+    | expr LESS expr
     { 
         $$ = makeBinaryExpr(TKN_OP_LESS, $1, $3);
-    }| expr GREATER expr
+    }
+    | expr GREATER expr
     { 
         $$ = makeBinaryExpr(TKN_OP_GREATER, $1, $3);
+    }
+    | expr OR expr
+    {
+        $$ = makeLogicalExpr(TKN_OP_OR, $1, $3);
+    }
+    | expr AND expr
+    {
+        $$ = makeLogicalExpr(TKN_OP_AND, $1, $3);
     }
     ;
 

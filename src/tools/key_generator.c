@@ -4,7 +4,7 @@
  * hash_djb2 - implementation of the djb2 algorithm
  * @str: string used to generate hash value
  *
- * Return: hash value
+ * RETURN: hash value
  */
 unsigned long int hash_djb2(const unsigned char *str)
 {
@@ -24,8 +24,8 @@ unsigned long int hash_djb2(const unsigned char *str)
  * @size: size of the hash table to be created
  * @key: the value to be converted to an index
  *
- * Return: the index of given key
-*/
+ * RETURN: the index of given key
+ */
 unsigned long int key_index(const unsigned char *key, unsigned long int size)
 {
 	unsigned long int hash_result;
@@ -33,4 +33,3 @@ unsigned long int key_index(const unsigned char *key, unsigned long int size)
 	hash_result = hash_djb2(key);
 	return (hash_result % size);
 }
-

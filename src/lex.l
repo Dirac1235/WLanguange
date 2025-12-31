@@ -17,6 +17,10 @@
 "print"                           column_number += 5; return PRINT;
 "true"                            column_number += 4; yylval.b_val = atoi(yytext); return BTRUE;
 "false"                           column_number += 5; yylval.b_val = atoi(yytext); return BFALSE;
+"or"                              column_number += 2; return OR;
+"and"                             column_number += 3; return AND;
+
+
 
 
 [0-9]+                            yylval.i_val=atoi(yytext);             column_number += yyleng; return INUMBER;

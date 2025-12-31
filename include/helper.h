@@ -7,7 +7,7 @@ Object *makeObj(ObjectType type);
 
 char *concat(char *left, char *right);
 char *mul_str(char *s, int val);
-Object *isTrue(Object *obj);
+Object *is_true(Object *obj);
 bool is_number(Object *o);
 bool is_str(Object *o);
 
