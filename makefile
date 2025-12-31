@@ -12,6 +12,8 @@ C_SRC = \
 	$(GEN_DIR)/lex.yy.c \
 	$(SRC_DIR)/ast.c \
 	$(SRC_DIR)/interpret.c \
+	$(SRC_DIR)/evaluate.c \
+	$(SRC_DIR)/execute.c \
 	$(SRC_DIR)/tools/helper.c\
 	$(SRC_DIR)/tools/hash_table.c\
 	$(SRC_DIR)/tools/key_generator.c\
