@@ -191,41 +191,30 @@ Stmt *makePrintStmt(Expr *expr)
   return stmt;
 }
 
-Stmt *makeBlockStmt(Stmt **s)
+Stmt *makeBlockStmt(BlockStmt *bs)
 {
   Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
   stmt->type = STMT_BLOCK;
-  BlockStmt *block = (BlockStmt *) malloc(sizeof(BlockStmt));
-  stmt->block_stmt = block;
-  stmt->block_stmt->stmts = s;
+  stmt->block_stmt = bs;
 
   return stmt;
 }
 
-Stmt **add_stmt(Stmt **stmts, size_t count)
+void add_to_block(BlockStmt *bs, Stmt *stmt)
 {
-  if (stmts == NULL) {
-    fprintf(stdout, "Uninitalized Variable");
-    exit(1);
-  }
-  Stmt **tmp = realloc(stmts, (count + 1) * sizeof(Expr *));
-
-  if (!tmp)
-  {
-    fprintf(stdout, "out of memory");
-    exit(1);
-  }
-  return tmp;
+ if (stmt == NULL) return; // Safety check!
+    if (bs->count >= bs->capacity) {
+        bs->capacity *= 2;
+        bs->stmts = realloc(bs->stmts, sizeof(struct Stmt*) * bs->capacity);
+    }
+    bs->stmts[bs->count++] = stmt;
 }
 
-Stmt **make_stmt_arr()
+BlockStmt *make_block_stmt()
 {
-  Stmt **tmp = malloc(sizeof(Expr *));
-  if (!tmp)
-  {
-    fprintf(stdout, "out of memory");
-    exit(1);
-  }
-  return tmp;
-  
+   BlockStmt *bs = malloc(sizeof(BlockStmt));
+    bs->count = 0;
+    bs->capacity = 10;
+    bs->stmts = malloc(sizeof(Stmt *) * bs->capacity);
+    return bs;
 }

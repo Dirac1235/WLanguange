@@ -158,6 +158,59 @@ bool is_str(Object *o)
 }
 
 /**
+ * create_env - creates environment for the block
+ * @parent: the parent symbol table
+ *
+ * RETURN: new environment
+ */
+Environment *create_env(Environment *parent)
+{
+  Environment *env = (Environment *)malloc(sizeof(Environment));
+  env->table = hash_table_create(TABLE_SIZE);
+  env->parent = parent;
+  return env;
+}
+
+Object *env_get(Environment *env, char *key)
+{
+  while (env != NULL)
+  {
+    Object *obj = hash_table_get(env->table, key);
+    if (obj)
+      return obj;
+    env = env->parent;
+  }
+  return NULL;
+}
+
+void env_assign(Environment *env, char *name, Object *value)
+{
+  while (env != NULL)
+  {
+    Object *obj = hash_table_get(env->table, name);
+    if (obj != NULL)
+    {
+      hash_table_set(env->table, name, value);
+      break;
+    }
+    env = env->parent;
+  }
+}
+
+void free_env(Environment *env)
+{
+  if (env == NULL)
+  {
+    fprintf(stderr, "Error while freeing memory NULL environment");
+    exit(1);
+  }
+  if (env->table != NULL)
+  {
+    hash_table_delete(env->table);
+  }
+}
+
+/**
  * tt_to_str - change TokenType to string
  * @type: Token Type
  *
@@ -192,7 +245,7 @@ char *tt_to_str(TokenType type)
   case TKN_OP_FALSE:
     return "false";
 
-  case TKN_OP_BANGEQUAL:
+  case TKN_OP_BANG_EQUAL:
     return "!=";
   case TKN_OP_EQUALEQUAL:
     return "==";

@@ -24,7 +24,7 @@ typedef enum
   TKN_OP_OR,
   TKN_OP_AND,
 
-  TKN_OP_BANGEQUAL,
+  TKN_OP_BANG_EQUAL,
   TKN_OP_EQUALEQUAL,
   TKN_OP_GREATEREQUAL,
   TKN_OP_LESSEQUAL,
@@ -49,24 +49,27 @@ typedef enum
   STMT_BOOL,
   STMT_ASS,
   STMT_IFELSE,
-  STMT_BLOCK 
+  STMT_BLOCK
 } NODE_TYPE;
 
-typedef enum {
+typedef enum
+{
   TYPE_INT,
   TYPE_DOUBLE,
   TYPE_STR,
   TYPE_BOOL,
 } ObjectType;
 
-typedef struct {
-    ObjectType type;
-    union {
-        int i;
-        double d;
-        char *s;
-        bool b;
-    } data;
+typedef struct
+{
+  ObjectType type;
+  union
+  {
+    int i;
+    double d;
+    char *s;
+    bool b;
+  } data;
 } Object;
 
 #endif

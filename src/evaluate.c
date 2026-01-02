@@ -2,15 +2,15 @@
 
 extern size_t line_number;
 extern size_t column_number;
-extern hash_table_t *ht;
+extern Environment *env;
 
 /**
  * evaluate - evaluates expessions
  * @expr: the expression to be evaluated
  *
- * RETURN: the evaluated object 
+ * RETURN: the evaluated object
  */
-Object *evaluate( Expr *expr)
+Object *evaluate(Expr *expr)
 {
   if (expr->type == EXPR_BINARY)
   {
@@ -217,7 +217,7 @@ Object *evaluate( Expr *expr)
         fprintf(stderr, "TypeError: Unsupported Operand '%%' on types str and str");
         exit(1);
       }
-    case TKN_OP_BANGEQUAL:
+    case TKN_OP_BANG_EQUAL:
     {
       Object *obj = makeObj(TYPE_BOOL);
 
@@ -453,7 +453,8 @@ Object *evaluate( Expr *expr)
 
     else if (expr->token->tkn == TKN_LITERAL)
     {
-      Object *value = hash_table_get(ht, expr->token->literal);
+      Object *value = env_get(env, expr->token->literal);
+      
       if (!value)
       {
         fprintf(stderr, "RuntimeError: undefined variable '%s' at %zu\n",
@@ -467,4 +468,3 @@ Object *evaluate( Expr *expr)
   fprintf(stderr, "SyntaxError: Wrong Operator at line: %zu got: %s\n", line_number, tt_to_str(expr->token->tkn));
   exit(1);
 }
-

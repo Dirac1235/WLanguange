@@ -2,8 +2,7 @@
 #include "../include/global.h"
 
 int yyparse();
-extern Stmt **stmt_root;
-extern size_t stmt_root_count;
+extern BlockStmt *stmt_root;
 
 extern FILE *yyin;
 
@@ -20,7 +19,7 @@ int main(int argc, char *argv[])
 
   if (status == 0)
   {
-    interpret(stmt_root, stmt_root_count);
+    interpret(stmt_root);
   }
   else
   {

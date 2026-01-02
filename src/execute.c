@@ -2,15 +2,16 @@
 
 extern size_t line_number;
 extern size_t column_number;
-extern hash_table_t *ht;
+extern Environment *env;
 
 /**
  * execute - executes statements
  * @stmt: the statement to be executed
  *
  */
-void execute(Stmt *stmt)
+void execute(Environment *env, Stmt *stmt)
 {
+ 
   if (stmt->type == STMT_PRINT)
   {
     Object *obj = evaluate(stmt->print_stmt->expr);
@@ -41,55 +42,56 @@ void execute(Stmt *stmt)
     }
   }
   else if (stmt->type == STMT_BLOCK) {
-    executeBlock(stmt);
+    executeBlock(stmt->block_stmt);
   }
   else if (stmt->type == STMT_STR)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
-    hash_table_set(ht, identifier, eval_res);
+    hash_table_set(env->table, identifier, eval_res);
   }
   else if (stmt->type == STMT_INT)
-  {
+  {    
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
-    hash_table_set(ht, identifier, eval_res);
+    hash_table_set(env->table, identifier, eval_res);
   }
   else if (stmt->type == STMT_DOUBLE)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
-    hash_table_set(ht, identifier, eval_res);
+    hash_table_set(env->table, identifier, eval_res);
   }
   else if (stmt->type == STMT_BOOL)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = is_true(evaluate(stmt->decl_stmt->expr));
-    hash_table_set(ht, identifier, eval_res);
+    hash_table_set(env->table, identifier, eval_res);
   }
   else if (stmt->type == STMT_ASS)
   {
     char *identifier = stmt->decl_stmt->identifier;
-    Object *value = hash_table_get(ht, identifier);
+    Object *value = env_get(env, identifier);
+    
     if (!value)
     {
-      fprintf(stderr, "Runtime error: undefined variable '%s' at: %zu\n", identifier, line_number);
+      fprintf(stderr, "RuntimeError: undefined variable '%s' at: %zu\n", identifier, line_number);
       exit(1);
     }
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
-    hash_table_set(ht, identifier, eval_res);
+    env_assign(env, identifier, eval_res);
   }
 }
 
-void executeBlock(Stmt *b_stmt)
+void executeBlock(BlockStmt *b_stmt)
 {
-  hash_table_t *prev = ht;
-  ht = hash_table_create(1024);
-  for (size_t i = 0; i < b_stmt->block_stmt->count; i++)
+  Environment *next = create_env(env);
+  env = next;
+  for (size_t i = 0; i < b_stmt->count; i++)
   {
-    execute(b_stmt->block_stmt->stmts[i]);
+    execute(env, b_stmt->stmts[i]);
   }
-  hash_table_delete(ht);
-  ht = prev;
+  env = next->parent;
+  // free_env(next);
   
 }

@@ -118,11 +118,11 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 23 "src/parser.y"
+#line 20 "src/parser.y"
 {
     struct Expr *expr_val;
     struct Stmt *stmt_val;
-    struct Stmt **stmt_arr;
+    struct BlockStmt *block_stmt;
 
     char* s_val;
     int i_val;

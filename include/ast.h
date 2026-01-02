@@ -53,11 +53,11 @@ typedef struct Expr
   NODE_TYPE type;
   union
   {
-    Binary  *binary;
+    Binary *binary;
     Logical *logical;
-    Unary   *unary;
-    Group   *group;
-    Token   *token;
+    Unary *unary;
+    Group *group;
+    Token *token;
   };
 } Expr;
 
@@ -72,10 +72,12 @@ typedef struct
   Expr *expr;
 } DeclStmt;
 
-typedef struct
+
+typedef struct BlockStmt
 {
   Stmt **stmts;
   size_t count;
+  size_t capacity;
 } BlockStmt;
 
 typedef struct Stmt
@@ -89,11 +91,11 @@ typedef struct Stmt
   };
 } Stmt;
 
-Stmt **stmt_root;
-size_t stmt_root_count;
+BlockStmt *stmt_root;
 size_t line_number;
 size_t column_number;
 hash_table_t *ht;
+Environment *env;
 
 Token *i_token(int lex);
 Token *b_token(int lex);
@@ -113,17 +115,17 @@ Expr *makeGroupExpr(Expr *inner);
 Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
 Stmt *makePrintStmt(Expr *expr);
 Stmt *makeAssStmt(char *identifier, Expr *decl);
-Stmt *makeBlockStmt(Stmt **stmts);
+Stmt *makeBlockStmt(BlockStmt *bs);
 
 void printAst(Expr **expr_lst, size_t expr_root_count);
-void interpret(Stmt **stmt_lst, size_t count);
+void interpret(BlockStmt *stmt_lst);
 
-Stmt **add_stmt(Stmt **stmts, size_t count);
-Stmt **make_stmt_arr();
- 
+void add_to_block(BlockStmt *bs, Stmt *stmt);
+BlockStmt *make_block_stmt();
+
 Object *evaluate(Expr *expr);
-void execute(Stmt *stmt);
-void executeBlock(Stmt *b_stmt);
+void execute(Environment *env, Stmt *stmt);
 
+void executeBlock(BlockStmt *b_stmt);
 
 #endif

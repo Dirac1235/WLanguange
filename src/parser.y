@@ -1,12 +1,9 @@
 %{
 #include "../include/global.h"
 
-extern Stmt **stmt_root;
-extern size_t stmt_root_count;
+extern BlockStmt *stmt_root;
 
 size_t _count = 0;
-size_t _pcount = 0;
-Stmt **stmt_arr;
 
 extern size_t line_number;
 extern size_t column_number;
@@ -23,7 +20,7 @@ void yyerror(char *s) {
 %union {
     struct Expr *expr_val;
     struct Stmt *stmt_val;
-    struct Stmt **stmt_arr;
+    struct BlockStmt *block_stmt;
 
     char* s_val;
     int i_val;
@@ -35,7 +32,6 @@ void yyerror(char *s) {
 %token  INT DOUBLE
 %token  STR BOOL EQUAL NUM 
 %token <b_val> BTRUE BFALSE
-
 
 %token <i_val> INUMBER
 %token <d_val> DNUMBER
@@ -52,7 +48,7 @@ void yyerror(char *s) {
 %left PLUS SUBTRACT
 %left MULTIPLY DIVIDE
 
-%type <stmt_arr> start program
+%type <block_stmt> start program
 %type <expr_val> expr
 %type <stmt_val> int_decl double_decl str_decl bool_decl 
 %type <stmt_val> print_stmt assignment declaration line block stmt  if_stmt
@@ -60,27 +56,34 @@ void yyerror(char *s) {
 
 %%
 start
-    : program                   { $$ = $1; }      
+    : program                   
+    { 
+        $$ = $1; 
+        stmt_root = $1;
+    }      
     ;    
 
 program
     : /* empty */ 
     {
-        $$ = make_stmt_arr();
+        $$ = make_block_stmt();
         _count = 0; 
     }
     | program line 
     {
-        $$ = add_stmt($$, _count);
-        $$[_count ++] = $2;
+        if ($2 != NULL) {
+            add_to_block($1, $2);
+        } 
+        $$ = $1;
     }
     ;
 
 line
-    : declaration NEWLINE       { $$ = $1; }
-    | stmt NEWLINE              { $$ = $1; }
-    | declaration               { $$ = $1; }
-    | stmt                      { $$ = $1; }
+    : NEWLINE                   { $$ = NULL }
+    | declaration NEWLINE       { $$ = $1;  }
+    | stmt NEWLINE              { $$ = $1;  }
+    | declaration               { $$ = $1;  }
+    | stmt                      { $$ = $1;  }
     ;
 
 declaration
@@ -113,8 +116,6 @@ block
     : LEFT_CURLY program RIGHT_CURLY
     {
         Stmt *stmt = makeBlockStmt($2);
-        stmt->block_stmt->count = _count;
-        _count = _pcount;
         $$ = stmt;
     }
 
@@ -254,7 +255,7 @@ expr
     }
     | expr BANGEQUAL expr
     {       
-        $$ = makeBinaryExpr(TKN_OP_BANGEQUAL, $1, $3);
+        $$ = makeBinaryExpr(TKN_OP_BANG_EQUAL, $1, $3);
     }
     | expr EQUALEQUAL expr
     { 
