@@ -66,9 +66,14 @@
      AND = 282,
      OR = 283,
      PRINT = 284,
-     LEFT_PAREN = 285,
-     RIGHT_PAREN = 286,
-     NEWLINE = 287
+     IF = 285,
+     WHILE = 286,
+     FUN = 287,
+     LEFT_PAREN = 288,
+     RIGHT_PAREN = 289,
+     NEWLINE = 290,
+     LEFT_CURLY = 291,
+     RIGHT_CURLY = 292
    };
 #endif
 /* Tokens.  */
@@ -99,26 +104,33 @@
 #define AND 282
 #define OR 283
 #define PRINT 284
-#define LEFT_PAREN 285
-#define RIGHT_PAREN 286
-#define NEWLINE 287
+#define IF 285
+#define WHILE 286
+#define FUN 287
+#define LEFT_PAREN 288
+#define RIGHT_PAREN 289
+#define NEWLINE 290
+#define LEFT_CURLY 291
+#define RIGHT_CURLY 292
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "src/parser.y"
+#line 23 "src/parser.y"
 {
     struct Expr *expr_val;
     struct Stmt *stmt_val;
-    char* str_val;
+    struct Stmt **stmt_arr;
+
+    char* s_val;
     int i_val;
     int b_val;
     double d_val;
 }
 /* Line 1529 of yacc.c.  */
-#line 122 "build/parser.tab.h"
+#line 134 "build/parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

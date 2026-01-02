@@ -10,6 +10,7 @@
 #include "helper.h"
 
 typedef struct Expr Expr;
+typedef struct Stmt Stmt;
 
 typedef struct Token
 {
@@ -52,11 +53,11 @@ typedef struct Expr
   NODE_TYPE type;
   union
   {
-    Binary *binary;
+    Binary  *binary;
     Logical *logical;
-    Unary *unary;
-    Group *group;
-    Token *token;
+    Unary   *unary;
+    Group   *group;
+    Token   *token;
   };
 } Expr;
 
@@ -73,11 +74,18 @@ typedef struct
 
 typedef struct
 {
+  Stmt **stmts;
+  size_t count;
+} BlockStmt;
+
+typedef struct Stmt
+{
   NODE_TYPE type;
   union
   {
     PrintStmt *print_stmt;
     DeclStmt *decl_stmt;
+    BlockStmt *block_stmt;
   };
 } Stmt;
 
@@ -95,7 +103,7 @@ Token *s_token(TokenType op, char *lex);
 Expr *s_expr(char *lex);
 Expr *i_expr(int lex);
 Expr *d_expr(long double lex);
-Expr *l_expr( char *lit);
+Expr *l_expr(char *lit);
 Expr *b_expr(int lex);
 
 Expr *makeUnaryExpr(TokenType op, Expr *right);
@@ -105,13 +113,17 @@ Expr *makeGroupExpr(Expr *inner);
 Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
 Stmt *makePrintStmt(Expr *expr);
 Stmt *makeAssStmt(char *identifier, Expr *decl);
+Stmt *makeBlockStmt(Stmt **stmts);
 
 void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(Stmt **stmt_lst, size_t count);
-Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count);
 
-Object *evaluate( Expr *expr);
+Stmt **add_stmt(Stmt **stmts, size_t count);
+Stmt **make_stmt_arr();
+ 
+Object *evaluate(Expr *expr);
 void execute(Stmt *stmt);
+void executeBlock(Stmt *b_stmt);
 
 
 #endif

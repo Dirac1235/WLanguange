@@ -6,7 +6,6 @@ extern hash_table_t *ht;
 #define HASH_TABLE_SIZE 1024;
 
 
-
 void interpret(Stmt **stmt_lst, size_t count)
 {
   ht = hash_table_create(1024);

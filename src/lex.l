@@ -10,44 +10,49 @@
 
 
 %%
-"int"                             column_number += 3; return INT;
-"double"                          column_number += 6; return DOUBLE;
-"str"                             column_number += 3; return STR;
-"bool"                            column_number += 4; return BOOL;
-"print"                           column_number += 5; return PRINT;
-"true"                            column_number += 4; yylval.b_val = atoi(yytext); return BTRUE;
-"false"                           column_number += 5; yylval.b_val = atoi(yytext); return BFALSE;
-"or"                              column_number += 2; return OR;
-"and"                             column_number += 3; return AND;
+"int"                             column_number += yyleng; return INT;
+"double"                          column_number += yyleng; return DOUBLE;
+"str"                             column_number += yyleng; return STR;
+"bool"                            column_number += yyleng; return BOOL;
+"print"                           column_number += yyleng; return PRINT;
+"true"                            column_number += yyleng; yylval.b_val = atoi(yytext); return BTRUE;
+"false"                           column_number += yyleng; yylval.b_val = atoi(yytext); return BFALSE;
+"or"                              column_number += yyleng; return OR;
+"and"                             column_number += yyleng; return AND;
+
+"if"                              column_number += yyleng; return IF;
+"while"                           column_number += yyleng; return WHILE;
+"FUN"                             column_number += yyleng; return WHILE;
 
 
 
-
-[0-9]+                            yylval.i_val=atoi(yytext);             column_number += yyleng; return INUMBER;
-[0-9]+\.[0-9]+                    yylval.d_val=strtod(yytext, NULL);     column_number += yyleng; return DNUMBER;
-[a-zA-Z_][a-zA-Z0-9_]*            yylval.str_val=strdup(yytext);         column_number += yyleng; return IDENTIFIER;
+[0-9]+                            column_number += yyleng; yylval.i_val=atoi(yytext);          return INUMBER;
+[0-9]+\.[0-9]+                    column_number += yyleng; yylval.d_val=strtod(yytext, NULL);  return DNUMBER;
+[a-zA-Z_][a-zA-Z0-9_]*            column_number += yyleng; yylval.s_val=strdup(yytext);      return IDENTIFIER;
 "\""([^"\\]|\\.)*"\""             {
-                                    yylval.str_val=strndup(yytext + 1, strlen(yytext) - 2);         
+                                    yylval.s_val=strndup(yytext + 1, strlen(yytext) - 2);         
                                     column_number += yyleng; return STRING;
                                   }
 
 
-"\+"                              column_number++;  return PLUS;
-"\%"                              column_number++;  return MOD;
-"\-"                              column_number++;  return SUBTRACT;
-"\*"                              column_number++;  return MULTIPLY;
-"\/"                              column_number++;  return DIVIDE;
-"\("                              column_number++;  return LEFT_PAREN;
-"\)"                              column_number++;  return RIGHT_PAREN;
+"\+"                              column_number += yyleng; return PLUS;
+"\%"                              column_number += yyleng; return MOD;
+"\-"                              column_number += yyleng; return SUBTRACT;
+"\*"                              column_number += yyleng; return MULTIPLY;
+"\/"                              column_number += yyleng; return DIVIDE;
+"\("                              column_number += yyleng; return LEFT_PAREN;
+"\)"                              column_number += yyleng; return RIGHT_PAREN;
+"\{"                              column_number += yyleng; return LEFT_CURLY;
+"\}"                              column_number += yyleng; return RIGHT_CURLY;
 
-"=="                              column_number+=2; return EQUALEQUAL;
-"!="                              column_number+=2; return BANGEQUAL;
-">="                              column_number+=2; return GREATEREQUAL;
-"<="                              column_number+=2; return LESSEQUAL;
-"="                               column_number++;  return EQUAL;
-"!"                               column_number++;  return BANG;
-">"                               column_number++;  return GREATER;
-"<"                               column_number++;  return LESS;
+"=="                              column_number += yyleng; return EQUALEQUAL;
+"!="                              column_number += yyleng; return BANGEQUAL;
+">="                              column_number += yyleng; return GREATEREQUAL;
+"<="                              column_number += yyleng; return LESSEQUAL;
+"="                               column_number += yyleng; return EQUAL;
+"!"                               column_number += yyleng; return BANG;
+">"                               column_number += yyleng; return GREATER;
+"<"                               column_number += yyleng; return LESS;
 
 
 

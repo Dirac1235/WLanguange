@@ -32,6 +32,7 @@ Token *d_token(long double lex)
   Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = TKN_DOUBLE;
   t->f_lexeme = lex;
+
   return t;
 }
 
@@ -40,10 +41,11 @@ Token *s_token(TokenType op, char *lex)
   Token *t = (Token *)malloc(sizeof(Token));
   t->tkn = op;
   t->s_lexeme = strdup(lex);
+
   return t;
 }
 
-// Expressions 
+// Expressions
 
 Expr *l_expr(char *lit)
 {
@@ -53,6 +55,7 @@ Expr *l_expr(char *lit)
   expr->token = t;
   expr->token->tkn = TKN_LITERAL;
   expr->token->literal = strdup(lit);
+
   return expr;
 }
 
@@ -61,6 +64,7 @@ Expr *s_expr(char *lex)
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
   expr->token = s_token(TKN_STRING, lex);
+
   return expr;
 }
 
@@ -69,6 +73,7 @@ Expr *i_expr(int lex)
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
   expr->token = i_token(lex);
+
   return expr;
 }
 
@@ -77,6 +82,7 @@ Expr *b_expr(int lex)
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
   expr->token = b_token(lex);
+
   return expr;
 }
 
@@ -85,6 +91,7 @@ Expr *d_expr(long double lex)
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_TOKEN;
   expr->token = d_token(lex);
+
   return expr;
 }
 
@@ -94,11 +101,12 @@ Expr *makeUnaryExpr(TokenType op, Expr *right)
   expr->type = EXPR_UNARY;
 
   Unary *u = (Unary *)malloc(sizeof(Unary));
-  
+
   u->token = s_token(op, tt_to_str(op));
   u->expr = right;
 
   expr->unary = u;
+
   return expr;
 }
 
@@ -113,10 +121,12 @@ Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right)
   b->right = right;
 
   expr->binary = b;
+
   return expr;
 }
 
-Expr *makeLogicalExpr(TokenType op, Expr *left, Expr *right) {
+Expr *makeLogicalExpr(TokenType op, Expr *left, Expr *right)
+{
   Expr *expr = (Expr *)malloc(sizeof(Expr));
   expr->type = EXPR_LOGICAL;
 
@@ -126,9 +136,9 @@ Expr *makeLogicalExpr(TokenType op, Expr *left, Expr *right) {
   b->right = right;
 
   expr->logical = b;
+
   return expr;
 }
-
 
 Expr *makeGroupExpr(Expr *inner)
 {
@@ -139,6 +149,7 @@ Expr *makeGroupExpr(Expr *inner)
   g->expr = inner;
 
   expr->group = g;
+
   return expr;
 }
 
@@ -153,6 +164,7 @@ Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl)
   stmt->decl_stmt = dst;
   stmt->decl_stmt->expr = decl;
   stmt->decl_stmt->identifier = identifier;
+
   return stmt;
 }
 
@@ -164,6 +176,7 @@ Stmt *makeAssStmt(char *identifier, Expr *decl)
   stmt->decl_stmt = dst;
   stmt->decl_stmt->expr = decl;
   stmt->decl_stmt->identifier = identifier;
+
   return stmt;
 }
 
@@ -174,12 +187,28 @@ Stmt *makePrintStmt(Expr *expr)
   PrintStmt *pst = (PrintStmt *)malloc(sizeof(PrintStmt));
   stmt->print_stmt = pst;
   stmt->print_stmt->expr = expr;
+
   return stmt;
 }
 
-Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count)
+Stmt *makeBlockStmt(Stmt **s)
 {
-  Stmt **tmp = realloc(stmt_root, (stmt_root_count + 1) * sizeof(Expr *));
+  Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
+  stmt->type = STMT_BLOCK;
+  BlockStmt *block = (BlockStmt *) malloc(sizeof(BlockStmt));
+  stmt->block_stmt = block;
+  stmt->block_stmt->stmts = s;
+
+  return stmt;
+}
+
+Stmt **add_stmt(Stmt **stmts, size_t count)
+{
+  if (stmts == NULL) {
+    fprintf(stdout, "Uninitalized Variable");
+    exit(1);
+  }
+  Stmt **tmp = realloc(stmts, (count + 1) * sizeof(Expr *));
 
   if (!tmp)
   {
@@ -187,4 +216,16 @@ Stmt **addStmt(Stmt **stmt_root, size_t stmt_root_count)
     exit(1);
   }
   return tmp;
+}
+
+Stmt **make_stmt_arr()
+{
+  Stmt **tmp = malloc(sizeof(Expr *));
+  if (!tmp)
+  {
+    fprintf(stdout, "out of memory");
+    exit(1);
+  }
+  return tmp;
+  
 }

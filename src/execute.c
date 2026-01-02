@@ -4,7 +4,6 @@ extern size_t line_number;
 extern size_t column_number;
 extern hash_table_t *ht;
 
-
 /**
  * execute - executes statements
  * @stmt: the statement to be executed
@@ -14,7 +13,7 @@ void execute(Stmt *stmt)
 {
   if (stmt->type == STMT_PRINT)
   {
-    Object *obj = evaluate( stmt->print_stmt->expr);
+    Object *obj = evaluate(stmt->print_stmt->expr);
     switch (obj->type)
     {
     case TYPE_INT:
@@ -41,28 +40,31 @@ void execute(Stmt *stmt)
       exit(1);
     }
   }
+  else if (stmt->type == STMT_BLOCK) {
+    executeBlock(stmt);
+  }
   else if (stmt->type == STMT_STR)
   {
     char *identifier = stmt->decl_stmt->identifier;
-    Object *eval_res = evaluate( stmt->decl_stmt->expr);
+    Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(ht, identifier, eval_res);
   }
   else if (stmt->type == STMT_INT)
   {
     char *identifier = stmt->decl_stmt->identifier;
-    Object *eval_res = evaluate( stmt->decl_stmt->expr);
+    Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(ht, identifier, eval_res);
   }
   else if (stmt->type == STMT_DOUBLE)
   {
     char *identifier = stmt->decl_stmt->identifier;
-    Object *eval_res = evaluate( stmt->decl_stmt->expr);
+    Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(ht, identifier, eval_res);
   }
   else if (stmt->type == STMT_BOOL)
   {
     char *identifier = stmt->decl_stmt->identifier;
-    Object *eval_res = is_true(evaluate( stmt->decl_stmt->expr));
+    Object *eval_res = is_true(evaluate(stmt->decl_stmt->expr));
     hash_table_set(ht, identifier, eval_res);
   }
   else if (stmt->type == STMT_ASS)
@@ -74,8 +76,20 @@ void execute(Stmt *stmt)
       fprintf(stderr, "Runtime error: undefined variable '%s' at: %zu\n", identifier, line_number);
       exit(1);
     }
-    Object *eval_res = evaluate( stmt->decl_stmt->expr);
+    Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(ht, identifier, eval_res);
   }
 }
 
+void executeBlock(Stmt *b_stmt)
+{
+  hash_table_t *prev = ht;
+  ht = hash_table_create(1024);
+  for (size_t i = 0; i < b_stmt->block_stmt->count; i++)
+  {
+    execute(b_stmt->block_stmt->stmts[i]);
+  }
+  hash_table_delete(ht);
+  ht = prev;
+  
+}

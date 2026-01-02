@@ -4,6 +4,10 @@
 extern Stmt **stmt_root;
 extern size_t stmt_root_count;
 
+size_t _count = 0;
+size_t _pcount = 0;
+Stmt **stmt_arr;
+
 extern size_t line_number;
 extern size_t column_number;
 
@@ -19,7 +23,9 @@ void yyerror(char *s) {
 %union {
     struct Expr *expr_val;
     struct Stmt *stmt_val;
-    char* str_val;
+    struct Stmt **stmt_arr;
+
+    char* s_val;
     int i_val;
     int b_val;
     double d_val;
@@ -33,68 +39,90 @@ void yyerror(char *s) {
 
 %token <i_val> INUMBER
 %token <d_val> DNUMBER
-%token <str_val> STRING IDENTIFIER
+%token <s_val> STRING IDENTIFIER
 
 %token PLUS SUBTRACT MULTIPLY DIVIDE MOD BANG 
 %token BANGEQUAL EQUALEQUAL GREATER LESS GREATEREQUAL LESSEQUAL 
 %token AND OR
-%token PRINT
-%token LEFT_PAREN RIGHT_PAREN NEWLINE
+%token PRINT IF WHILE FUN
+%token LEFT_PAREN RIGHT_PAREN NEWLINE LEFT_CURLY RIGHT_CURLY
 
 %start start
 
 %left PLUS SUBTRACT
 %left MULTIPLY DIVIDE
 
+%type <stmt_arr> start program
 %type <expr_val> expr
-%type <stmt_val> int_decl double_decl str_decl bool_decl
+%type <stmt_val> int_decl double_decl str_decl bool_decl 
+%type <stmt_val> print_stmt assignment declaration line block stmt  if_stmt
 
 
 %%
 start
-    : program        
+    : program                   { $$ = $1; }      
     ;    
 
 program
-    : /* empty */
-    | program line
+    : /* empty */ 
+    {
+        $$ = make_stmt_arr();
+        _count = 0; 
+    }
+    | program line 
+    {
+        $$ = add_stmt($$, _count);
+        $$[_count ++] = $2;
+    }
     ;
 
 line
-    : declaration NEWLINE
-    | stmt NEWLINE
-    | declaration
-    | stmt
+    : declaration NEWLINE       { $$ = $1; }
+    | stmt NEWLINE              { $$ = $1; }
+    | declaration               { $$ = $1; }
+    | stmt                      { $$ = $1; }
     ;
 
 declaration
-    : int_decl                         
-    | double_decl                         
-    | str_decl                         
-    | bool_decl                                            
+    : int_decl                  { $$ = $1; }                       
+    | double_decl               { $$ = $1; }            
+    | str_decl                  { $$ = $1; }         
+    | bool_decl                 { $$ = $1; }                            
     ;
 
 stmt
-    : printstmt
-    | assignment
+    : print_stmt                { $$ = $1; }
+    | if_stmt                   { $$ = $1; }
+    | block                     { $$ = $1; }
+    | assignment                { $$ = $1; }
     ;
 
-printstmt
+print_stmt
     : PRINT LEFT_PAREN expr RIGHT_PAREN
     {
         Stmt *print = makePrintStmt($3);
-        stmt_root = addStmt(stmt_root, stmt_root_count);
-        stmt_root[stmt_root_count++] = print;
+        $$ = print;
     }
     ;
+
+if_stmt
+    : IF LEFT_PAREN expr RIGHT_PAREN stmt
+    ;
+
+block
+    : LEFT_CURLY program RIGHT_CURLY
+    {
+        Stmt *stmt = makeBlockStmt($2);
+        stmt->block_stmt->count = _count;
+        _count = _pcount;
+        $$ = stmt;
+    }
 
 assignment
     : IDENTIFIER EQUAL expr 
     {
         Stmt *ass_stmt = makeAssStmt($1, $3);
-        stmt_root = addStmt(stmt_root, stmt_root_count);
-        stmt_root[stmt_root_count++] = ass_stmt;
-
+        $$ = ass_stmt;
     }
     ;
 
@@ -102,16 +130,14 @@ int_decl
     : INT IDENTIFIER EQUAL expr        
     {
         Stmt *num_d = makeDeclStmt(STMT_INT, $2, $4);
-        stmt_root = addStmt(stmt_root, stmt_root_count);
-        stmt_root[stmt_root_count++] = num_d;
+        $$ = num_d;
     } 
     ;
 double_decl
     : DOUBLE IDENTIFIER EQUAL expr        
     {
         Stmt *num_d = makeDeclStmt(STMT_DOUBLE, $2, $4);
-        stmt_root = addStmt(stmt_root, stmt_root_count);
-        stmt_root[stmt_root_count++] = num_d;
+        $$ = num_d;
     } 
     ;
 
@@ -119,8 +145,7 @@ str_decl
     : STR IDENTIFIER EQUAL expr        
     {
         Stmt *str_d = makeDeclStmt(STMT_STR, $2, $4);
-        stmt_root = addStmt(stmt_root, stmt_root_count);
-        stmt_root[stmt_root_count++] = str_d;
+        $$ = str_d;
     }
     ;
 
@@ -128,8 +153,7 @@ bool_decl
     : BOOL IDENTIFIER EQUAL expr     
     {
         Stmt *bool_d = makeDeclStmt(STMT_BOOL, $2, $4);
-        stmt_root = addStmt(stmt_root, stmt_root_count);
-        stmt_root[stmt_root_count++] = bool_d;
+        $$ = bool_d;
     }
     ;
 

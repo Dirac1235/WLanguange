@@ -48,7 +48,8 @@ typedef enum
   STMT_STR,
   STMT_BOOL,
   STMT_ASS,
-  STMT_IFELSE
+  STMT_IFELSE,
+  STMT_BLOCK 
 } NODE_TYPE;
 
 typedef enum {
