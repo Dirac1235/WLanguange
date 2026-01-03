@@ -73,12 +73,20 @@ typedef struct
 } DeclStmt;
 
 
+
 typedef struct BlockStmt
 {
   Stmt **stmts;
   size_t count;
   size_t capacity;
 } BlockStmt;
+
+typedef struct IfStmt
+{
+  Expr *expr;
+  Stmt *ifs;
+  Stmt *els;
+} IfStmt;
 
 typedef struct Stmt
 {
@@ -88,6 +96,7 @@ typedef struct Stmt
     PrintStmt *print_stmt;
     DeclStmt *decl_stmt;
     BlockStmt *block_stmt;
+    IfStmt *if_stmt;
   };
 } Stmt;
 
@@ -116,6 +125,7 @@ Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
 Stmt *makePrintStmt(Expr *expr);
 Stmt *makeAssStmt(char *identifier, Expr *decl);
 Stmt *makeBlockStmt(BlockStmt *bs);
+Stmt *makeIfStmt(Expr *expr, Stmt *ifs, Stmt *els);
 
 void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(BlockStmt *stmt_lst);
@@ -125,7 +135,6 @@ BlockStmt *make_block_stmt();
 
 Object *evaluate(Expr *expr);
 void execute(Environment *env, Stmt *stmt);
-
 void executeBlock(BlockStmt *b_stmt);
 
 #endif

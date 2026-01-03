@@ -200,6 +200,19 @@ Stmt *makeBlockStmt(BlockStmt *bs)
   return stmt;
 }
 
+Stmt *makeIfStmt(Expr *expr, Stmt *ifs, Stmt *els) {
+  Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
+  stmt->type = STMT_IFELSE;
+  IfStmt *ifst = (IfStmt *)malloc(sizeof(Stmt));
+  stmt->if_stmt = ifst;
+  stmt->if_stmt->ifs = ifs;
+  stmt->if_stmt->els = els;
+  stmt->if_stmt->expr = expr;
+
+  return stmt;
+}
+
+
 void add_to_block(BlockStmt *bs, Stmt *stmt)
 {
  if (stmt == NULL) return; // Safety check!

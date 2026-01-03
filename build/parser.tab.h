@@ -69,11 +69,13 @@
      IF = 285,
      WHILE = 286,
      FUN = 287,
-     LEFT_PAREN = 288,
-     RIGHT_PAREN = 289,
-     NEWLINE = 290,
-     LEFT_CURLY = 291,
-     RIGHT_CURLY = 292
+     ELSE = 288,
+     LEFT_PAREN = 289,
+     RIGHT_PAREN = 290,
+     NEWLINE = 291,
+     LEFT_CURLY = 292,
+     RIGHT_CURLY = 293,
+     IFX = 294
    };
 #endif
 /* Tokens.  */
@@ -107,11 +109,13 @@
 #define IF 285
 #define WHILE 286
 #define FUN 287
-#define LEFT_PAREN 288
-#define RIGHT_PAREN 289
-#define NEWLINE 290
-#define LEFT_CURLY 291
-#define RIGHT_CURLY 292
+#define ELSE 288
+#define LEFT_PAREN 289
+#define RIGHT_PAREN 290
+#define NEWLINE 291
+#define LEFT_CURLY 292
+#define RIGHT_CURLY 293
+#define IFX 294
 
 
 
@@ -130,7 +134,7 @@ typedef union YYSTYPE
     double d_val;
 }
 /* Line 1529 of yacc.c.  */
-#line 134 "build/parser.tab.h"
+#line 138 "build/parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

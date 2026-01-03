@@ -11,7 +11,7 @@ extern Environment *env;
  */
 void execute(Environment *env, Stmt *stmt)
 {
- 
+
   if (stmt->type == STMT_PRINT)
   {
     Object *obj = evaluate(stmt->print_stmt->expr);
@@ -41,8 +41,21 @@ void execute(Environment *env, Stmt *stmt)
       exit(1);
     }
   }
-  else if (stmt->type == STMT_BLOCK) {
+  else if (stmt->type == STMT_BLOCK)
+  {
     executeBlock(stmt->block_stmt);
+  }
+  else if (stmt->type == STMT_IFELSE)
+  {
+    Object *isTrue = is_true(evaluate(stmt->if_stmt->expr));
+    if (isTrue->data.b)
+    {
+      executeBlock(stmt->if_stmt->ifs->block_stmt);
+    }
+    else
+    {
+      executeBlock(stmt->if_stmt->els->block_stmt);
+    }
   }
   else if (stmt->type == STMT_STR)
   {
@@ -51,7 +64,7 @@ void execute(Environment *env, Stmt *stmt)
     hash_table_set(env->table, identifier, eval_res);
   }
   else if (stmt->type == STMT_INT)
-  {    
+  {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(env->table, identifier, eval_res);
@@ -72,7 +85,7 @@ void execute(Environment *env, Stmt *stmt)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *value = env_get(env, identifier);
-    
+
     if (!value)
     {
       fprintf(stderr, "RuntimeError: undefined variable '%s' at: %zu\n", identifier, line_number);
@@ -93,5 +106,4 @@ void executeBlock(BlockStmt *b_stmt)
   }
   env = next->parent;
   // free_env(next);
-  
 }

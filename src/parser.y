@@ -40,8 +40,11 @@ void yyerror(char *s) {
 %token PLUS SUBTRACT MULTIPLY DIVIDE MOD BANG 
 %token BANGEQUAL EQUALEQUAL GREATER LESS GREATEREQUAL LESSEQUAL 
 %token AND OR
-%token PRINT IF WHILE FUN
+%token PRINT IF WHILE FUN ELSE
 %token LEFT_PAREN RIGHT_PAREN NEWLINE LEFT_CURLY RIGHT_CURLY
+
+%nonassoc IFX  /* Lowest precedence */
+%nonassoc ELSE /* Higher precedence than IFX */
 
 %start start
 
@@ -109,7 +112,15 @@ print_stmt
     ;
 
 if_stmt
-    : IF LEFT_PAREN expr RIGHT_PAREN stmt
+    :
+    IF LEFT_PAREN expr RIGHT_PAREN stmt %prec IFX 
+    { 
+        $$ = makeIfStmt($3, $5, NULL); 
+    }
+    | IF LEFT_PAREN expr RIGHT_PAREN stmt ELSE stmt 
+    { 
+        $$ = makeIfStmt($3, $5, $7); 
+    }
     ;
 
 block

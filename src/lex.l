@@ -21,6 +21,7 @@
 "and"                             column_number += yyleng; return AND;
 
 "if"                              column_number += yyleng; return IF;
+"else"                            column_number += yyleng; return ELSE;
 "while"                           column_number += yyleng; return WHILE;
 "FUN"                             column_number += yyleng; return WHILE;
 
