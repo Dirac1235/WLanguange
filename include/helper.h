@@ -27,6 +27,7 @@ char *mul_str(char *s, int val);
 Object *is_true(Object *obj);
 bool is_number(Object *o);
 bool is_str(Object *o);
+bool is_truthy(Object *obj);
 
 
 char *tt_to_str(TokenType type);

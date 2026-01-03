@@ -376,15 +376,15 @@ Object *evaluate(Expr *expr)
   else if (expr->type == EXPR_LOGICAL)
   {
     Object *val = evaluate(expr->logical->left);
-    Object *l = is_true(val);
+    bool l = is_truthy(val);
     if (expr->logical->token->tkn == TKN_OP_OR)
     {
-      if (l->data.b)
+      if (l)
         return val;
     }
     else if (expr->logical->token->tkn == TKN_OP_AND)
     {
-      if (!l->data.b)
+      if (!l)
         return val;
     }
     return evaluate(expr->logical->right);

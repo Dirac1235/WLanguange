@@ -72,8 +72,6 @@ typedef struct
   Expr *expr;
 } DeclStmt;
 
-
-
 typedef struct BlockStmt
 {
   Stmt **stmts;
@@ -83,10 +81,16 @@ typedef struct BlockStmt
 
 typedef struct IfStmt
 {
-  Expr *expr;
-  Stmt *ifs;
-  Stmt *els;
+  Expr *condition;
+  Stmt *if_body;
+  Stmt *else_body;
 } IfStmt;
+
+typedef struct WhileStmt
+{
+  Expr *condition;
+  Stmt *body;
+} WhileStmt;
 
 typedef struct Stmt
 {
@@ -97,6 +101,7 @@ typedef struct Stmt
     DeclStmt *decl_stmt;
     BlockStmt *block_stmt;
     IfStmt *if_stmt;
+    WhileStmt *while_stmt;
   };
 } Stmt;
 
@@ -126,6 +131,7 @@ Stmt *makePrintStmt(Expr *expr);
 Stmt *makeAssStmt(char *identifier, Expr *decl);
 Stmt *makeBlockStmt(BlockStmt *bs);
 Stmt *makeIfStmt(Expr *expr, Stmt *ifs, Stmt *els);
+Stmt *makeWhileStmt(Expr *expr, Stmt *stmt);
 
 void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(BlockStmt *stmt_lst);

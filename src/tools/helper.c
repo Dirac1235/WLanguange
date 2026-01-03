@@ -157,6 +157,20 @@ bool is_str(Object *o)
   return o->type == TYPE_STR;
 }
 
+bool is_truthy(Object *obj) {
+    if (obj == NULL) return false;
+
+    switch (obj->type) {
+        case TYPE_INT:    return obj->data.i != 0;
+        case TYPE_DOUBLE: return obj->data.d != 0.0;
+        case TYPE_BOOL:   return obj->data.b;
+        case TYPE_STR:    
+            return (obj->data.s != NULL && obj->data.s[0] != '\0');
+        default:
+            return false; // Unknown types are false
+    }
+}
+
 /**
  * create_env - creates environment for the block
  * @parent: the parent symbol table

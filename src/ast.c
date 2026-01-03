@@ -200,18 +200,27 @@ Stmt *makeBlockStmt(BlockStmt *bs)
   return stmt;
 }
 
-Stmt *makeIfStmt(Expr *expr, Stmt *ifs, Stmt *els) {
+Stmt *makeIfStmt(Expr *condition, Stmt *ifs, Stmt *els) {
   Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
   stmt->type = STMT_IFELSE;
-  IfStmt *ifst = (IfStmt *)malloc(sizeof(Stmt));
+  IfStmt *ifst = (IfStmt *)malloc(sizeof(IfStmt));
   stmt->if_stmt = ifst;
-  stmt->if_stmt->ifs = ifs;
-  stmt->if_stmt->els = els;
-  stmt->if_stmt->expr = expr;
+  stmt->if_stmt->if_body = ifs;
+  stmt->if_stmt->else_body = els;
+  stmt->if_stmt->condition = condition;
 
   return stmt;
 }
 
+Stmt* makeWhileStmt(Expr* condition, Stmt* body) {
+    Stmt* s = malloc(sizeof(Stmt));
+    s->type = STMT_WHILE;
+    WhileStmt *wst = (WhileStmt *)malloc(sizeof(WhileStmt));
+    s->while_stmt = wst;
+    s->while_stmt->condition = condition;
+    s->while_stmt->body = body;
+    return s;
+}
 
 void add_to_block(BlockStmt *bs, Stmt *stmt)
 {

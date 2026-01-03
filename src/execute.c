@@ -41,46 +41,61 @@ void execute(Environment *env, Stmt *stmt)
       exit(1);
     }
   }
+
   else if (stmt->type == STMT_BLOCK)
   {
     executeBlock(stmt->block_stmt);
   }
+
   else if (stmt->type == STMT_IFELSE)
   {
-    Object *isTrue = is_true(evaluate(stmt->if_stmt->expr));
-    if (isTrue->data.b)
+    bool isTrue = is_truthy(evaluate(stmt->if_stmt->condition));
+    if (isTrue)
     {
-      executeBlock(stmt->if_stmt->ifs->block_stmt);
+      executeBlock(stmt->if_stmt->if_body->block_stmt);
     }
     else
     {
-      executeBlock(stmt->if_stmt->els->block_stmt);
+      if(stmt->if_stmt->else_body)
+      executeBlock(stmt->if_stmt->else_body->block_stmt);
     }
   }
+
+  else if (stmt->type == STMT_WHILE)
+  {
+    while (is_truthy(evaluate(stmt->while_stmt->condition))) {
+      executeBlock(stmt->while_stmt->body->block_stmt);
+    }
+  }
+
   else if (stmt->type == STMT_STR)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(env->table, identifier, eval_res);
   }
+
   else if (stmt->type == STMT_INT)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(env->table, identifier, eval_res);
   }
+
   else if (stmt->type == STMT_DOUBLE)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = evaluate(stmt->decl_stmt->expr);
     hash_table_set(env->table, identifier, eval_res);
   }
+
   else if (stmt->type == STMT_BOOL)
   {
     char *identifier = stmt->decl_stmt->identifier;
     Object *eval_res = is_true(evaluate(stmt->decl_stmt->expr));
     hash_table_set(env->table, identifier, eval_res);
   }
+
   else if (stmt->type == STMT_ASS)
   {
     char *identifier = stmt->decl_stmt->identifier;

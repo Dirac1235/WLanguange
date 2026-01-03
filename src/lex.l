@@ -23,7 +23,7 @@
 "if"                              column_number += yyleng; return IF;
 "else"                            column_number += yyleng; return ELSE;
 "while"                           column_number += yyleng; return WHILE;
-"FUN"                             column_number += yyleng; return WHILE;
+"fun"                             column_number += yyleng; return FUN;
 
 
 

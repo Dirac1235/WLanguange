@@ -28,7 +28,6 @@ void yyerror(char *s) {
     double d_val;
 }
 
-
 %token  INT DOUBLE
 %token  STR BOOL EQUAL NUM 
 %token <b_val> BTRUE BFALSE
@@ -54,7 +53,7 @@ void yyerror(char *s) {
 %type <block_stmt> start program
 %type <expr_val> expr
 %type <stmt_val> int_decl double_decl str_decl bool_decl 
-%type <stmt_val> print_stmt assignment declaration line block stmt  if_stmt
+%type <stmt_val> print_stmt assignment declaration line block stmt if_stmt while_stmt
 
 
 %%
@@ -99,6 +98,7 @@ declaration
 stmt
     : print_stmt                { $$ = $1; }
     | if_stmt                   { $$ = $1; }
+    | while_stmt                { $$ = $1; }
     | block                     { $$ = $1; }
     | assignment                { $$ = $1; }
     ;
@@ -126,9 +126,16 @@ if_stmt
 block
     : LEFT_CURLY program RIGHT_CURLY
     {
-        Stmt *stmt = makeBlockStmt($2);
-        $$ = stmt;
+        $$ = makeBlockStmt($2);
     }
+    ;
+     
+while_stmt
+    : WHILE LEFT_PAREN expr RIGHT_PAREN stmt
+    {
+        $$ = makeWhileStmt($3, $5);
+    }
+    ;
 
 assignment
     : IDENTIFIER EQUAL expr 
