@@ -1,4 +1,4 @@
-## interpret — small Flex/Bison-based interpreter
+## WLanguage — small Flex/Bison-based interpreter
 
 A small interpreter/parser project implemented with Flex (lex) and Bison (yacc). It parses a simple expression language, constructs an AST, and interprets or prints results. The codebase contains the lexer, parser, AST utilities, and a small example input in `examples/`.
 
