@@ -11,11 +11,10 @@ extern size_t column_number;
 extern int yylex(void);
 
 void yyerror(char *s) {
-  fprintf(stdout, "%s\n",s);
+    fprintf(stderr, "%s \n", s);
 };
 
 %}
-
 
 %union {
     struct Expr *expr_val;
@@ -51,7 +50,7 @@ void yyerror(char *s) {
 %left MULTIPLY DIVIDE
 
 %type <block_stmt> start program
-%type <expr_val> expr
+%type <expr_val> expr primary
 %type <stmt_val> int_decl double_decl str_decl bool_decl 
 %type <stmt_val> print_stmt assignment declaration line block stmt if_stmt while_stmt
 
@@ -96,11 +95,11 @@ declaration
     ;
 
 stmt
-    : print_stmt                { $$ = $1; }
-    | if_stmt                   { $$ = $1; }
-    | while_stmt                { $$ = $1; }
-    | block                     { $$ = $1; }
-    | assignment                { $$ = $1; }
+    : print_stmt                { $$ = $1;  }
+    | if_stmt                   { $$ = $1;  }
+    | while_stmt                { $$ = $1;  }
+    | block                     { $$ = $1;  }
+    | assignment                { $$ = $1;  }
     ;
 
 print_stmt
@@ -112,8 +111,7 @@ print_stmt
     ;
 
 if_stmt
-    :
-    IF LEFT_PAREN expr RIGHT_PAREN stmt %prec IFX 
+    : IF LEFT_PAREN expr RIGHT_PAREN stmt %prec IFX 
     { 
         $$ = makeIfStmt($3, $5, NULL); 
     }
@@ -121,6 +119,15 @@ if_stmt
     { 
         $$ = makeIfStmt($3, $5, $7); 
     }
+    | IF LEFT_PAREN expr RIGHT_PAREN NEWLINE stmt %prec IFX 
+    { 
+        $$ = makeIfStmt($3, $6, NULL); 
+    }
+    | IF LEFT_PAREN expr RIGHT_PAREN NEWLINE stmt ELSE stmt 
+    { 
+        $$ = makeIfStmt($3, $6, $8); 
+    }
+    
     ;
 
 block
@@ -134,6 +141,10 @@ while_stmt
     : WHILE LEFT_PAREN expr RIGHT_PAREN stmt
     {
         $$ = makeWhileStmt($3, $5);
+    }
+    | WHILE LEFT_PAREN expr RIGHT_PAREN NEWLINE stmt
+    {
+        $$ = makeWhileStmt($3, $6);
     }
     ;
 
@@ -177,13 +188,7 @@ bool_decl
     ;
 
 expr  
-    : INUMBER                             { $$ = i_expr($1);        }
-    | DNUMBER                             { $$ = d_expr($1);        }
-    | BFALSE                              { $$ = b_expr($1);        }
-    | BTRUE                               { $$ = b_expr($1);        }
-    | STRING                              { $$ = s_expr($1);        }       
-    | IDENTIFIER                          { $$ = l_expr($1);        }       
-    | LEFT_PAREN expr RIGHT_PAREN         { $$ = makeGroupExpr($2); }
+    : primary  { $$ = $1}
     | SUBTRACT expr
     {
         $$ = makeUnaryExpr(TKN_OP_SUB, $2);
@@ -196,13 +201,7 @@ expr
     | expr DIVIDE expr                    
     { 
         if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
-            fprintf(
-            stderr,
-                "Unsupported Operation '/' on types '%s' and '%s' at line %zu\n",
-                tt_to_str($1->token->tkn), 
-                tt_to_str($3->token->tkn),
-                  line_number
-                  );
+            syntax_error(line_number, column_number,"Unsupported operaition: / on type %s and %s ", tt_to_str($1->token->tkn), tt_to_str($3->token->tkn));
             exit(1);
             }
         $$ = makeBinaryExpr(TKN_OP_DIV, $1, $3);
@@ -211,13 +210,8 @@ expr
     | expr MULTIPLY expr                  
     { 
         if (($1->token->tkn == TKN_STRING && $3->token->tkn == TKN_DOUBLE) || ( $1->token->tkn == TKN_DOUBLE && $3->token->tkn == TKN_STRING) ) {
-            fprintf(
-            stderr,
-                "Unsupported Operation '*' on types '%s' and '%s' at line %zu\n",
-                tt_to_str($1->token->tkn), 
-                tt_to_str($3->token->tkn),
-                  line_number
-            );
+            syntax_error(line_number, column_number,"Unsupported operaition: '*' on type %s and %s ", tt_to_str($1->token->tkn), tt_to_str($3->token->tkn));
+
             exit(1);
         }
          $$ = makeBinaryExpr(TKN_OP_MUL, $1, $3);
@@ -227,13 +221,8 @@ expr
     | expr PLUS expr                      
     {    
         if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
-            fprintf(
-            stderr,
-                "Unsupported Operation '+' on types '%s' and '%s' at line %zu\n",
-                tt_to_str($1->token->tkn), 
-                tt_to_str($3->token->tkn),
-                  line_number
-            );
+           syntax_error(line_number, column_number, "Unsupportd operation: '+' on type %s and %s", tt_to_str($1->token->tkn), tt_to_str($3->token->tkn));
+
             exit(1);
         }
         $$ = makeBinaryExpr(TKN_OP_ADD, $1, $3);
@@ -242,13 +231,7 @@ expr
     | expr SUBTRACT expr                  
     { 
         if (($1->token->tkn == TKN_STRING && ($3->token->tkn ==TKN_INT || $3->token->tkn == TKN_DOUBLE)) || ( ($1->token->tkn ==TKN_INT || $1->token->tkn == TKN_DOUBLE) && $3->token->tkn == TKN_STRING) ) {
-            fprintf(
-            stderr,
-                "Unsupported Operation '-' on types '%s' and '%s' at line %zu\n",
-                tt_to_str($1->token->tkn), 
-                tt_to_str($3->token->tkn),
-                  line_number
-            );
+            syntax_error(line_number, column_number, "Unsupportd operation: '-' on type %s and %s", tt_to_str($1->token->tkn), tt_to_str($3->token->tkn));
             exit(1);
         }
         $$ = makeBinaryExpr(TKN_OP_SUB, $1, $3);
@@ -259,13 +242,7 @@ expr
         if ($1->token->tkn == TKN_INT && $3->token->tkn == TKN_INT)
             $$ = makeBinaryExpr(TKN_OP_MOD, $1, $3);
         else {
-            fprintf(
-            stderr,
-                "Unsupported Operation '+' on types '%s' and '%s' at line %zu\n",
-                tt_to_str($1->token->tkn), 
-                tt_to_str($3->token->tkn),
-                line_number
-            );
+            syntax_error(line_number, column_number, "Unsupportd operation: '%%' on type %s and %s", tt_to_str($1->token->tkn), tt_to_str($3->token->tkn));
             exit(1);
             
         }
@@ -304,6 +281,14 @@ expr
         $$ = makeLogicalExpr(TKN_OP_AND, $1, $3);
     }
     ;
+primary
+    : INUMBER                             { $$ = i_expr($1);        }
+    | DNUMBER                             { $$ = d_expr($1);        }
+    | BFALSE                              { $$ = b_expr($1);        }
+    | BTRUE                               { $$ = b_expr($1);        }
+    | STRING                              { $$ = s_expr($1);        }       
+    | IDENTIFIER                          { $$ = l_expr($1);        }       
+    | LEFT_PAREN expr RIGHT_PAREN         { $$ = makeGroupExpr($2); }
 
 %%
 

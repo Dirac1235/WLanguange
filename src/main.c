@@ -6,6 +6,9 @@ extern BlockStmt *stmt_root;
 
 extern FILE *yyin;
 
+/**
+ * still don't know what this does
+ */
 int yywrap()
 {
   return 1;

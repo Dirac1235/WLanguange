@@ -13,6 +13,7 @@ C_SRC = \
 	$(SRC_DIR)/ast.c \
 	$(SRC_DIR)/interpret.c \
 	$(SRC_DIR)/evaluate.c \
+	$(SRC_DIR)/error.c \
 	$(SRC_DIR)/execute.c \
 	$(SRC_DIR)/tools/helper.c\
 	$(SRC_DIR)/tools/hash_table.c\
