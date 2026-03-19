@@ -9,6 +9,8 @@
 #include "hash_table.h"
 #include "helper.h"
 
+#define MAX_ARG_SIZE = 255;
+
 typedef struct Expr Expr;
 typedef struct Stmt Stmt;
 
@@ -81,7 +83,7 @@ typedef struct BlockStmt
 
 typedef struct IfStmt
 {
-  Expr *condition;
+  Expr *condition; 
   Stmt *if_body;
   Stmt *else_body;
 } IfStmt;
@@ -91,6 +93,18 @@ typedef struct WhileStmt
   Expr *condition;
   Stmt *body;
 } WhileStmt;
+
+typedef struct CallExpr
+{
+  Expr *identifier;
+  Expr **argument_lst;
+} CallExpr;
+
+typedef struct FunExpr {
+  Expr *params;
+  Stmt *body;
+  Token *return_type;
+} FunExpr;
 
 typedef struct Stmt
 {
@@ -105,41 +119,47 @@ typedef struct Stmt
   };
 } Stmt;
 
-BlockStmt *stmt_root;
+BlockStmt* stmt_root;
+Expr **arg_lst;
+size_t arg_count;
 size_t line_number;
 size_t column_number;
-hash_table_t *ht;
-Environment *env;
+hash_table_t* ht;
+Environment* env;
 
-Token *i_token(int lex);
-Token *b_token(int lex);
-Token *d_token(long double lex);
-Token *s_token(TokenType op, char *lex);
+Token* i_token(int lex);
+Token* b_token(int lex);
+Token* d_token(long double lex);
+Token* s_token(TokenType op, char *lex);
 
-Expr *s_expr(char *lex);
-Expr *i_expr(int lex);
-Expr *d_expr(long double lex);
-Expr *l_expr(char *lit);
-Expr *b_expr(int lex);
+Expr* s_expr(char *lex);
+Expr* i_expr(int lex);
+Expr* d_expr(long double lex);
+Expr* l_expr(char *lit);
+Expr* b_expr(int lex);
 
-Expr *makeUnaryExpr(TokenType op, Expr *right);
-Expr *makeBinaryExpr(TokenType op, Expr *left, Expr *right);
-Expr *makeLogicalExpr(TokenType op, Expr *left, Expr *right);
-Expr *makeGroupExpr(Expr *inner);
-Stmt *makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
-Stmt *makePrintStmt(Expr *expr);
-Stmt *makeAssStmt(char *identifier, Expr *decl);
-Stmt *makeBlockStmt(BlockStmt *bs);
-Stmt *makeIfStmt(Expr *expr, Stmt *ifs, Stmt *els);
-Stmt *makeWhileStmt(Expr *expr, Stmt *stmt);
+Expr* makeUnaryExpr(TokenType op, Expr *right);
+Expr* makeBinaryExpr(TokenType op, Expr *left, Expr *right);
+Expr* makeLogicalExpr(TokenType op, Expr *left, Expr *right);
+Expr* makeGroupExpr(Expr *inner);
+Expr* makeCall(Expr *literal, Expr** arguments); 
+
+Stmt* makeDeclStmt(NODE_TYPE type, char *identifier, Expr *decl);
+Stmt* makePrintStmt(Expr *expr);
+Stmt* makeAssStmt(char *identifier, Expr *decl);
+Stmt* makeBlockStmt(BlockStmt *bs);
+Stmt* makeIfStmt(Expr *expr, Stmt *ifs, Stmt *els);
+Stmt* makeWhileStmt(Expr *expr, Stmt *stmt);
 
 void printAst(Expr **expr_lst, size_t expr_root_count);
 void interpret(BlockStmt *stmt_lst);
 
 void add_to_block(BlockStmt *bs, Stmt *stmt);
-BlockStmt *make_block_stmt();
+Expr** add_to_args(Expr** arg_list, Expr* expr, size_t* arg_count);
 
-Object *evaluate(Expr *expr);
+BlockStmt* make_block_stmt();
+
+Object* evaluate(Expr *expr);
 void execute(Environment *env, Stmt *stmt);
 void executeBlock(BlockStmt *b_stmt);
 

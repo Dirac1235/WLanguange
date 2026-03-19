@@ -44,38 +44,39 @@
      STR = 260,
      BOOL = 261,
      EQUAL = 262,
-     NUM = 263,
-     BTRUE = 264,
-     BFALSE = 265,
-     INUMBER = 266,
-     DNUMBER = 267,
-     STRING = 268,
-     IDENTIFIER = 269,
-     PLUS = 270,
-     SUBTRACT = 271,
-     MULTIPLY = 272,
-     DIVIDE = 273,
-     MOD = 274,
-     BANG = 275,
-     BANGEQUAL = 276,
-     EQUALEQUAL = 277,
-     GREATER = 278,
-     LESS = 279,
-     GREATEREQUAL = 280,
-     LESSEQUAL = 281,
-     AND = 282,
-     OR = 283,
-     PRINT = 284,
-     IF = 285,
-     WHILE = 286,
-     FUN = 287,
-     ELSE = 288,
-     LEFT_PAREN = 289,
-     RIGHT_PAREN = 290,
-     NEWLINE = 291,
-     LEFT_CURLY = 292,
-     RIGHT_CURLY = 293,
-     IFX = 294
+     COMMA = 263,
+     NUM = 264,
+     BTRUE = 265,
+     BFALSE = 266,
+     INUMBER = 267,
+     DNUMBER = 268,
+     STRING = 269,
+     IDENTIFIER = 270,
+     PLUS = 271,
+     SUBTRACT = 272,
+     MULTIPLY = 273,
+     DIVIDE = 274,
+     MOD = 275,
+     BANG = 276,
+     BANGEQUAL = 277,
+     EQUALEQUAL = 278,
+     GREATER = 279,
+     LESS = 280,
+     GREATEREQUAL = 281,
+     LESSEQUAL = 282,
+     AND = 283,
+     OR = 284,
+     PRINT = 285,
+     IF = 286,
+     WHILE = 287,
+     FUN = 288,
+     ELSE = 289,
+     LEFT_PAREN = 290,
+     RIGHT_PAREN = 291,
+     NEWLINE = 292,
+     LEFT_CURLY = 293,
+     RIGHT_CURLY = 294,
+     IFX = 295
    };
 #endif
 /* Tokens.  */
@@ -84,57 +85,59 @@
 #define STR 260
 #define BOOL 261
 #define EQUAL 262
-#define NUM 263
-#define BTRUE 264
-#define BFALSE 265
-#define INUMBER 266
-#define DNUMBER 267
-#define STRING 268
-#define IDENTIFIER 269
-#define PLUS 270
-#define SUBTRACT 271
-#define MULTIPLY 272
-#define DIVIDE 273
-#define MOD 274
-#define BANG 275
-#define BANGEQUAL 276
-#define EQUALEQUAL 277
-#define GREATER 278
-#define LESS 279
-#define GREATEREQUAL 280
-#define LESSEQUAL 281
-#define AND 282
-#define OR 283
-#define PRINT 284
-#define IF 285
-#define WHILE 286
-#define FUN 287
-#define ELSE 288
-#define LEFT_PAREN 289
-#define RIGHT_PAREN 290
-#define NEWLINE 291
-#define LEFT_CURLY 292
-#define RIGHT_CURLY 293
-#define IFX 294
+#define COMMA 263
+#define NUM 264
+#define BTRUE 265
+#define BFALSE 266
+#define INUMBER 267
+#define DNUMBER 268
+#define STRING 269
+#define IDENTIFIER 270
+#define PLUS 271
+#define SUBTRACT 272
+#define MULTIPLY 273
+#define DIVIDE 274
+#define MOD 275
+#define BANG 276
+#define BANGEQUAL 277
+#define EQUALEQUAL 278
+#define GREATER 279
+#define LESS 280
+#define GREATEREQUAL 281
+#define LESSEQUAL 282
+#define AND 283
+#define OR 284
+#define PRINT 285
+#define IF 286
+#define WHILE 287
+#define FUN 288
+#define ELSE 289
+#define LEFT_PAREN 290
+#define RIGHT_PAREN 291
+#define NEWLINE 292
+#define LEFT_CURLY 293
+#define RIGHT_CURLY 294
+#define IFX 295
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 19 "src/parser.y"
+#line 21 "src/parser.y"
 {
-    struct Expr *expr_val;
-    struct Stmt *stmt_val;
+    struct Expr* expr_val;
+    struct Expr** expr_lst;
+    struct Stmt* stmt_val;
     struct BlockStmt *block_stmt;
-
+    
     char* s_val;
     int i_val;
     int b_val;
     double d_val;
 }
 /* Line 1529 of yacc.c.  */
-#line 138 "build/parser.tab.h"
+#line 141 "build/parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

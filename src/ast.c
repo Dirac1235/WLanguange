@@ -95,6 +95,7 @@ Expr *d_expr(long double lex)
   return expr;
 }
 
+
 Expr *makeUnaryExpr(TokenType op, Expr *right)
 {
   Expr *expr = (Expr *)malloc(sizeof(Expr));
@@ -200,6 +201,11 @@ Stmt *makeBlockStmt(BlockStmt *bs)
   return stmt;
 }
 
+/**
+* so i need to hold the function stmt in one place
+* then execute it when the user calls the function name
+* */
+
 Stmt *makeIfStmt(Expr *condition, Stmt *ifs, Stmt *els) {
   Stmt *stmt = (Stmt *)malloc(sizeof(Stmt));
   stmt->type = STMT_IFELSE;
@@ -217,10 +223,23 @@ Stmt* makeWhileStmt(Expr* condition, Stmt* body) {
     s->type = STMT_WHILE;
     WhileStmt *wst = (WhileStmt *)malloc(sizeof(WhileStmt));
     s->while_stmt = wst;
-    s->while_stmt->condition = condition;
+    s->while_stmt->condition = condition; 
     s->while_stmt->body = body;
     return s;
 }
+
+Expr* makeCall(Expr *literal, Expr** arguments) {
+    Expr *result = malloc(sizeof(Expr *));
+    result->type = EXPR_TOKEN;
+    result->token = malloc(sizeof(Token *));
+    
+    result->token->tkn = TKN_STRING;
+    result->token->s_lexeme = "sixty eight";
+    
+    return result;
+} 
+
+
 
 void add_to_block(BlockStmt *bs, Stmt *stmt)
 {
@@ -231,6 +250,19 @@ void add_to_block(BlockStmt *bs, Stmt *stmt)
     }
     bs->stmts[bs->count++] = stmt;
 }
+
+Expr** add_to_args(Expr** arg_list, Expr* expr, size_t* arg_count) {
+    if (*arg_count ++ == 0) {
+      arg_list = malloc(sizeof(Expr **));
+    }
+
+    if(*arg_count > 255) {
+      fprintf(stderr, "Can't have more than 255 arguments.");
+    }
+    arg_list[*arg_count++] = expr;
+    return arg_list;
+}
+
 
 BlockStmt *make_block_stmt()
 {

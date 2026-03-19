@@ -27,9 +27,9 @@
 
 
 
-[0-9]+                            column_number += yyleng; yylval.i_val=atoi(yytext);          return INUMBER;
-[0-9]+\.[0-9]+                    column_number += yyleng; yylval.d_val=strtod(yytext, NULL);  return DNUMBER;
-[a-zA-Z_][a-zA-Z0-9_]*            column_number += yyleng; yylval.s_val=strdup(yytext);      return IDENTIFIER;
+[0-9]+                            column_number += yyleng; yylval.i_val = atoi(yytext);  printf("%s\n", yytext);        return INUMBER;
+[0-9]+\.[0-9]+                    column_number += yyleng; yylval.d_val = strtod(yytext, NULL); printf("%s", yytext);  return DNUMBER;
+[a-zA-Z_][a-zA-Z0-9_]*            column_number += yyleng; yylval.s_val = strdup(yytext);   printf("%s \n", yytext);     return IDENTIFIER;
 "\""([^"\\]|\\.)*"\""             {
                                     yylval.s_val=strndup(yytext + 1, strlen(yytext) - 2);         
                                     column_number += yyleng; return STRING;
@@ -41,7 +41,7 @@
 "\-"                              column_number += yyleng; return SUBTRACT;
 "\*"                              column_number += yyleng; return MULTIPLY;
 "\/"                              column_number += yyleng; return DIVIDE;
-"\("                              column_number += yyleng; return LEFT_PAREN;
+"\("                              column_number += yyleng; printf("%s\n", yytext); return LEFT_PAREN;
 "\)"                              column_number += yyleng; return RIGHT_PAREN;
 "\{"                              column_number += yyleng; return LEFT_CURLY;
 "\}"                              column_number += yyleng; return RIGHT_CURLY;
@@ -54,6 +54,8 @@
 "!"                               column_number += yyleng; return BANG;
 ">"                               column_number += yyleng; return GREATER;
 "<"                               column_number += yyleng; return LESS;
+","                               column_number += yyleng; printf("%s\n", yytext); return COMMA;
+
 
 
 

@@ -2,6 +2,8 @@
 #include "../include/global.h"
 
 extern BlockStmt *stmt_root;
+extern Expr** arg_lst;
+extern size_t arg_count;
 
 size_t _count = 0;
 
@@ -17,10 +19,11 @@ void yyerror(char *s) {
 %}
 
 %union {
-    struct Expr *expr_val;
-    struct Stmt *stmt_val;
+    struct Expr* expr_val;
+    struct Expr** expr_lst;
+    struct Stmt* stmt_val;
     struct BlockStmt *block_stmt;
-
+    
     char* s_val;
     int i_val;
     int b_val;
@@ -28,7 +31,8 @@ void yyerror(char *s) {
 }
 
 %token  INT DOUBLE
-%token  STR BOOL EQUAL NUM 
+%token  STR BOOL EQUAL COMMA NUM 
+
 %token <b_val> BTRUE BFALSE
 
 %token <i_val> INUMBER
@@ -50,7 +54,8 @@ void yyerror(char *s) {
 %left MULTIPLY DIVIDE
 
 %type <block_stmt> start program
-%type <expr_val> expr primary
+%type <expr_val> expr primary 
+%type <expr_lst> args args_opt
 %type <stmt_val> int_decl double_decl str_decl bool_decl 
 %type <stmt_val> print_stmt assignment declaration line block stmt if_stmt while_stmt
 
@@ -127,7 +132,7 @@ if_stmt
     { 
         $$ = makeIfStmt($3, $6, $8); 
     }
-    
+   
     ;
 
 block
@@ -162,13 +167,25 @@ int_decl
         Stmt *num_d = makeDeclStmt(STMT_INT, $2, $4);
         $$ = num_d;
     } 
+    | INT IDENTIFIER
+    {
+        Stmt *num_d = makeDeclStmt(STMT_INT, $2, 0);
+        $$ = num_d;
+    }
     ;
 double_decl
     : DOUBLE IDENTIFIER EQUAL expr        
     {
         Stmt *num_d = makeDeclStmt(STMT_DOUBLE, $2, $4);
         $$ = num_d;
-    } 
+
+    }
+    | DOUBLE IDENTIFIER
+    {
+        Stmt *num_d = makeDeclStmt(STMT_DOUBLE, $2, 0);
+        $$ = num_d;
+
+    }
     ;
 
 str_decl
@@ -177,6 +194,12 @@ str_decl
         Stmt *str_d = makeDeclStmt(STMT_STR, $2, $4);
         $$ = str_d;
     }
+    | STR IDENTIFIER        
+    {
+        Stmt *str_d = makeDeclStmt(STMT_STR, $2, NULL);
+        $$ = str_d;
+    }
+
     ;
 
 bool_decl
@@ -186,9 +209,24 @@ bool_decl
         $$ = bool_d;
     }
     ;
+args_opt
+    : /* empty */                   { $$ = NULL; }   // allow test()
+    | args                          { $$ = $1;   }
+    ;
+
+args
+    : primary 
+    { 
+        $$ = add_to_args(arg_lst, $1, &arg_count);
+    }
+    | args COMMA primary  
+    {
+        $$ = add_to_args(arg_lst, $3, &arg_count);
+    }
+    ;
 
 expr  
-    : primary  { $$ = $1}
+    : primary    { $$ = $1 }
     | SUBTRACT expr
     {
         $$ = makeUnaryExpr(TKN_OP_SUB, $2);
@@ -234,7 +272,7 @@ expr
             syntax_error(line_number, column_number, "Unsupportd operation: '-' on type %s and %s", tt_to_str($1->token->tkn), tt_to_str($3->token->tkn));
             exit(1);
         }
-        $$ = makeBinaryExpr(TKN_OP_SUB, $1, $3);
+        $$  = makeBinaryExpr(TKN_OP_SUB, $1, $3);
 
     }
     | expr MOD expr                       
@@ -281,17 +319,15 @@ expr
         $$ = makeLogicalExpr(TKN_OP_AND, $1, $3);
     }
     ;
+
 primary
-    : INUMBER                             { $$ = i_expr($1);        }
-    | DNUMBER                             { $$ = d_expr($1);        }
-    | BFALSE                              { $$ = b_expr($1);        }
-    | BTRUE                               { $$ = b_expr($1);        }
-    | STRING                              { $$ = s_expr($1);        }       
-    | IDENTIFIER                          { $$ = l_expr($1);        }       
-    | LEFT_PAREN expr RIGHT_PAREN         { $$ = makeGroupExpr($2); }
-
+    : INUMBER                                { $$ = i_expr($1);          }
+    | DNUMBER                                { $$ = d_expr($1);          }
+    | BFALSE                                 { $$ = b_expr($1);          }
+    | BTRUE                                  { $$ = b_expr($1);          }
+    | STRING                                 { $$ = s_expr($1);          }       
+    | IDENTIFIER                             { $$ = l_expr($1);          }       
+    | LEFT_PAREN expr RIGHT_PAREN            { $$ = makeGroupExpr($2);   }
+    | IDENTIFIER LEFT_PAREN args_opt RIGHT_PAREN { $$ = makeCall($1, $3);    }
+    ;
 %%
-
-
-
-
